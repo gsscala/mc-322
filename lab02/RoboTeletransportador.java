@@ -4,15 +4,15 @@ public class RoboTeletransportador extends RoboAereo{
     }
 
     public void subir(int pos){
-        if (pos >= this.altitude)
-            this.altitude = pos;
+        if (pos >= getAltitude())
+            setAltitude(pos);
         else
             System.out.println("Posição desejada menor que a atual!");
     }
     
     public void descer(int pos){
-        if (pos <= this.altitude)
-            this.altitude = pos;
+        if (pos <= getAltitude())
+            setAltitude(pos);
         else
             System.out.println("Posição desejada maior que a atual!");
     }

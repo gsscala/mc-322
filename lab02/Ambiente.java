@@ -3,8 +3,23 @@ import java.util.ArrayList;
 public class Ambiente {
     private int largura;
     private int altura;
+    private ArrayList<Robo> robos = new ArrayList<>();
 
-    public ArrayList<Robo> robos = new ArrayList<>();
+    public int getAltura() {
+        return altura;
+    }
+
+    public void setAltura(int altura) {
+        this.altura = altura;
+    }
+
+    public int getLargura() {
+        return largura;
+    }
+
+    public void setLargura(int largura) {
+        this.largura = largura;
+    }
 
     public Ambiente (int largura, int altura){
         this.largura = largura;
@@ -13,6 +28,10 @@ public class Ambiente {
 
     public void adicionarRobo(Robo r){
         robos.add(r);
+    }
+
+    public ArrayList<Robo> getRobos(){
+        return this.robos;
     }
 
     public boolean dentroDosLimites(int x, int y){

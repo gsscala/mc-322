@@ -4,12 +4,12 @@ public class RoboAleatorio extends RoboAereo{
     }
 
     public void subir(){
-        RandomNumberGenerator RNG = new RandomNumberGenerator(this.altitude, this.altitudeMaxima);
-        this.altitude = RNG.generate();
+        RandomNumberGenerator RNG = new RandomNumberGenerator(getAltitude(), getAltitudeMaxima() - 1);
+        setAltitude(RNG.generate());
     }
 
     public void descer(){
-        RandomNumberGenerator RNG = new RandomNumberGenerator(0, this.altitude);
-        this.altitude = RNG.generate();
+        RandomNumberGenerator RNG = new RandomNumberGenerator(0, getAltitude());
+        setAltitude(RNG.generate());
     }
 }
