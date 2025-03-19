@@ -1,8 +1,19 @@
+import java.util.ArrayList;
+
 public class Robo {
     private String nome;
     private int posicaoX;
     private int posicaoY;
     private String direcao;
+    ArrayList<Ambiente> ambientes = new ArrayList<>();
+
+    public ArrayList<Ambiente> getAmbientes() {
+        return ambientes;
+    }
+
+    public void addAmbiente(Ambiente ambiente){
+        ambientes.add(ambiente);
+    }
 
     public String getDirecao() {
         return direcao;
@@ -46,8 +57,13 @@ public class Robo {
         setPosicaoY(getPosicaoY() + deltaY);
     }
     
-    public String[] identificarObstaculo(){
-        return;
+    public ArrayList<Pair> identificarObstaculo(){
+        ArrayList<Pair>obstaculos = new ArrayList<>();
+        for (Ambiente ambiente : getAmbientes())
+            for (Robo robo : ambiente.getRobos())
+                obstaculos.add(robo.exibirPosicao());
+            
+        return obstaculos;
     }
     public Pair exibirPosicao(){
         return new Pair(getPosicaoX(), getPosicaoY());
