@@ -2,7 +2,7 @@ public class Robo {
     private String nome;
     private int posicaoX;
     private int posicaoY;
-    private String direcao
+    private String direcao;
 
     public Robo (String nome, int xIni, int yIni, String direcao){
         this.nome = nome;

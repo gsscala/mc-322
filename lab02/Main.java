@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         Ambiente ambiente = new Ambiente(100, 200);
-        Robo robo = new Robo("dog", 0, 0);
+        Robo robo = new Robo("dog", 0, 0, "Norte");
         robo.mover(10, 20);
         Pair posAtual = robo.exibirPosicao();
         
