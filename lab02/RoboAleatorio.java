@@ -14,8 +14,8 @@ public class RoboAleatorio extends RoboAereo{
     }
 
     public void mover(){
-        int xmin = (int)1e9;
-        int ymin = (int)1e9;
+        int xmin = Integer.MAX_VALUE;
+        int ymin = Integer.MAX_VALUE;
         for (Ambiente ambiente : getAmbientes()){
             xmin = Math.min(xmin, ambiente.getLargura() - 1);
             ymin = Math.min(ymin, ambiente.getAltura() - 1);

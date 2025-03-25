@@ -11,6 +11,7 @@ public class Main {
         ambiente.adicionarRobo(roboteletransportador);
         ambiente.adicionarRobo(roboterrestre);
         ambiente.adicionarRobo(roboaereo);
+        ambiente.adicionarRobo(robo);
 
         for (Robo r : ambiente.getRobos())
             r.mover(1, 1);
@@ -25,6 +26,6 @@ public class Main {
         roboteletransportador.mover(1, 1);
 
         for (Robo obstaculo : robo.identificarObstaculo())
-            System.out.println("Obstáculo identificado: " + obstaculo.exibirPosicao());
+            System.out.println("Robo identificado: (" + obstaculo.exibirPosicao().first() + ", " + obstaculo.exibirPosicao().second() + ")");
     }
 }
