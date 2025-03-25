@@ -1,8 +1,8 @@
 import java.util.Random;
 
 public class RandomNumberGenerator {
-    int min;
-    int max;
+    private int min;
+    private int max;
 
     public int getMax() {
         return max;

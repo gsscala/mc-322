@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Ambiente {
     private int largura;
     private int altura;
-    private ArrayList<Robo> robos = new ArrayList<>();
+    protected ArrayList<Robo> robos = new ArrayList<>();
 
     public int getAltura() {
         return altura;
@@ -28,6 +28,7 @@ public class Ambiente {
 
     public void adicionarRobo(Robo r){
         robos.add(r);
+        r.addAmbiente(this);
     }
 
     public ArrayList<Robo> getRobos(){

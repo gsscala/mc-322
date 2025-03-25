@@ -5,7 +5,7 @@ public class Robo {
     private int posicaoX;
     private int posicaoY;
     private String direcao;
-    ArrayList<Ambiente> ambientes = new ArrayList<>();
+    protected ArrayList<Ambiente> ambientes = new ArrayList<>();
 
     public ArrayList<Ambiente> getAmbientes() {
         return ambientes;
@@ -53,18 +53,20 @@ public class Robo {
     }
     
     public void mover(int deltaX, int deltaY){
-        setPosicaoX(getPosicaoX() + deltaX);
-        setPosicaoY(getPosicaoY() + deltaY);
+        setPosicaoX(Math.max(getPosicaoX() + deltaX, 0));
+        setPosicaoY(Math.max(getPosicaoY() + deltaY, 0));
+        this.direcao = (deltaX > 0 ? "Leste" : "Oeste");
+        this.direcao = (deltaY > 0 ? "Norte" : "Sul");
     }
     
-    public ArrayList<Pair> identificarObstaculo(){
-        ArrayList<Pair>obstaculos = new ArrayList<>();
+    public ArrayList<Robo> identificarObstaculo(){
+        ArrayList<Robo>obstaculos = new ArrayList<>();
         for (Ambiente ambiente : getAmbientes())
             for (Robo robo : ambiente.getRobos())
-                obstaculos.add(robo.exibirPosicao());
-            
+                obstaculos.add(robo);
         return obstaculos;
     }
+    
     public Pair exibirPosicao(){
         return new Pair(getPosicaoX(), getPosicaoY());
     }

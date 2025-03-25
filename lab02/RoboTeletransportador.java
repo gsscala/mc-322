@@ -16,4 +16,10 @@ public class RoboTeletransportador extends RoboAereo{
         else
             System.out.println("Posição desejada maior que a atual!");
     }
+
+    public void mover(int x, int y){
+        setPosicaoX(Math.max(x, 0));
+        setPosicaoY(Math.max(y, 0));
+
+    }
 }
