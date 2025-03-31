@@ -2,5 +2,5 @@
 ## Os laboratórios foram desenvolvidos pela dupla Giovanni Santos Scalabrin (RA 281210) e Rodrigo Banin Ferraz Camargo (RA 238257)
 
 ### Dentro da pasta de cada lab, basta compilar e executar o arquivo Main.java. Pode-se fazê-lo com os seguintes comandos:
-#### javac -d bin src/lab##/Main.java
+#### javac -d bin src/lab02/*.java
 #### java -cp bin lab##.Main
