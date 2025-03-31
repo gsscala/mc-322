@@ -41,6 +41,11 @@ public class Main {
         // Faz o robô aleatório mover-se
         roboaleatorio.mover();
 
+        // Mostra robôs antes de atirar (confirmar que foram criados)
+
+        for (Robo obstaculo : robo.identificarObstaculo())
+            System.out.println("Robo identificado: (" + obstaculo.exibirPosicao().first() + ", " + obstaculo.exibirPosicao().second() + ")");
+
         // Faz o robô atirador realizar a ação de atirar
         roboatirador.atirar();
 
