@@ -25,14 +25,14 @@ public class RoboAtirador extends RoboAereo {
         for (Ambiente ambiente : this.getAmbientes()) {
             // Remove os robôs que estão na linha de tiro, ou seja, que estão na mesma posição X ou Y, dependendo da direção do robô
             ambiente.getRobos().removeIf(enemy -> enemy != this && (enemy.getPosicaoX() == this.getPosicaoX() &&
-            // Verifica se o inimigo está na mesma posição Y e dentro da linha de tiro na direção "norte" ou "sul"
-            ((enemy.getPosicaoY() >= this.getPosicaoY() && this.getDirecao() == "norte") ||
-            (enemy.getPosicaoY() <= this.getPosicaoY() && this.getDirecao() == "sul")) ||
-            // Verifica se o inimigo está na mesma posição X e dentro da linha de tiro na direção "leste" ou "oeste"
-            enemy.getPosicaoY() == this.getPosicaoY() && ((enemy.getPosicaoX() >= this.getPosicaoX() && this.getDirecao() == "leste") ||
-            (enemy.getPosicaoX() <= this.getPosicaoX() && this.getDirecao() == "oeste"))));
+            // Verifica se o inimigo está na mesma posição Y e dentro da linha de tiro na direção "Norte" ou "Sul"
+            ((enemy.getPosicaoY() >= this.getPosicaoY() && this.getDirecao() == "Norte") ||
+            (enemy.getPosicaoY() <= this.getPosicaoY() && this.getDirecao() == "Sul")) ||
+            // Verifica se o inimigo está na mesma posição X e dentro da linha de tiro na direção "Leste" ou "Oeste"
+            enemy.getPosicaoY() == this.getPosicaoY() && ((enemy.getPosicaoX() >= this.getPosicaoX() && this.getDirecao() == "Leste") ||
+            (enemy.getPosicaoX() <= this.getPosicaoX() && this.getDirecao() == "Oeste"))));
         }
         // Exibe uma mensagem indicando que o robô atirador eliminou os inimigos utilizando sua arma
-        System.out.println(this.nome + " acaba de eliminar os inimigos ao utilizar " + this.arma);
+        System.out.println(this.getNome() + " acaba de eliminar os inimigos ao utilizar " + this.getArma());
     }
 }

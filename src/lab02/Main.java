@@ -35,10 +35,10 @@ public class Main {
         for (RoboAereo r : new RoboAereo[]{roboaleatorio, roboatirador, roboaereo})
             r.subir(1);
         
-        // Faz o robô terrestre mover-se para a posição (1000, 1000, 1000)
+        // Faz o robô terrestre tentar mover-se para a posição (1000, 1000, 1000)
         roboterrestre.mover(1000, 1000, 1000);
 
-        // Faz o robô aleatório mover-se, possivelmente sem parâmetros específicos
+        // Faz o robô aleatório mover-se
         roboaleatorio.mover();
 
         // Faz o robô atirador realizar a ação de atirar

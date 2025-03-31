@@ -3,4 +3,4 @@ Os laboratórios foram desenvolvidos pela dupla Giovanni Santos Scalabrin (RA 28
 
 Dentro da pasta de cada lab, basta compilar e executar o arquivo Main.java.
 javac -d bin src/lab##/Main.java
-java -cp bin mc322.Simulator.Main ############
+java -cp bin lab##.Main
