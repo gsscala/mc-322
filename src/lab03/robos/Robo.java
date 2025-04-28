@@ -1,5 +1,8 @@
+package robos;
 // Importa a classe ArrayList da biblioteca java.util, que será usada para armazenar objetos em uma lista dinâmica
-import java.util.ArrayList;
+
+import ambiente.Ambiente;
+import utils.Pair;
 
 // Declaração da classe Robo, que representa um robô com posição e direção em um ou mais ambientes
 public class Robo {
@@ -8,6 +11,7 @@ public class Robo {
     private int posicaoX;
     private int posicaoY;
     private String direcao;
+    private boolean isVivo = true;
     
     // Lista de ambientes onde o robô pode estar presente
     private Ambiente ambiente;
@@ -21,13 +25,23 @@ public class Robo {
     }
 
     // Método getter para a lista de ambientes (retorna a lista de ambientes do robô)
-    public Ambiente getAmbientes() {
+    public Ambiente getAmbiente() {
         return ambiente;  // Retorna a lista de ambientes
     }
 
     // Método que adiciona um ambiente à lista de ambientes do robô
     public void setAmbiente(Ambiente ambiente) {
         this.ambiente = ambiente;  // Adiciona o ambiente à lista
+        setPosicaoX(0);
+        setPosicaoY(0);
+    }
+
+    public boolean getIsVivo() {
+        return isVivo;  
+    }
+
+    public void setIsVivo(boolean isVivo) {
+        this.isVivo = isVivo;  
     }
 
     // Método getter para a direção do robô
@@ -70,30 +84,88 @@ public class Robo {
         return posicaoY;  // Retorna a posição Y do robô
     }
 
+    public int getAltitude() {
+        return 0;
+    }
 
-    // Método que move o robô para uma nova posição, alterando suas coordenadas X e Y
-    public void mover(int deltaX, int deltaY) {
-        // Atualiza a posição X, garantindo que o valor seja maior ou igual a 0
-        setPosicaoX(Math.max(getPosicaoX() + deltaX, 0)); 
-        // Atualiza a posição Y, garantindo que o valor seja maior ou igual a 0
-        setPosicaoY(Math.max(getPosicaoY() + deltaY, 0));  
-        
+    // Testa mover na ordem eixo X/Y
+    public void mover(int deltaX, int deltaY) { 
+        int x = getPosicaoX();
+        int y = getPosicaoY();
+
+        int stepX = deltaX > 0 ? 1 : -1; 
+        int stepY = deltaY > 0 ? 1 : -1;
+
+        for (int dx = stepX; dx != deltaX + stepX; dx += stepX) {
+            
+            if (x + dx == getAmbiente().getLargura()) {
+                System.out.println("Chegou ao limite superior do eixo X");
+                setPosicaoX(getAmbiente().getLargura()-1); // 0-indexado 
+
+                break;
+            }
+            if (x + dx < 0) {
+                System.out.println("Chegou ao limite inferior do eixo X");
+                setPosicaoX(0);
+
+                break;
+            }
+
+            if(ambiente.handleColisoes(x + dx, y, getAltitude(), this)) {
+                int end_pos = x + dx - stepX;
+                setPosicaoX(end_pos);
+
+                if(!this.getIsVivo()) {
+                    System.out.println("Robô morreu durante movimentação no eixo Y, escolha outro");
+                }
+                else {
+                    System.out.println("Robô parou durante movimentação em X = " + end_pos);
+                }
+
+                break;
+            }
+
+            setPosicaoX(x + dx);
+        }
+
+        for (int dy = stepY; dy != deltaY + stepY; dy += stepY) {
+
+            if (y + dy == getAmbiente().getLargura()) {
+                System.out.println("Chegou ao limite superior do eixo Y");
+                setPosicaoY(getAmbiente().getLargura()-1);
+
+                break;
+            }
+            if (y + dy < 0) {
+                System.out.println("Chegou ao limite inferior do eixo Y");
+                setPosicaoY(0); // nem precisa
+
+                break;
+            }
+    
+            if (ambiente.handleColisoes(x, y + dy, getAltitude(), this)) {
+                int end_pos = y + dy - stepY;
+                setPosicaoY(end_pos);
+    
+                if (!this.getIsVivo()) {
+                    System.out.println("Robô morreu durante movimentação no eixo Y, escolha outro");
+                } else {
+                    System.out.println("Robô parou durante movimentação em Y = " + end_pos);
+                }
+                
+                break;
+            }
+
+            setPosicaoY(y + deltaY);
+        }
+
+
+
         // Define a direção do robô com base no valor de deltaX
         this.direcao = (deltaX > 0 ? "Leste" : "Oeste");  
         
         // Atualiza a direção com base no valor de deltaY
         this.direcao = (deltaY > 0 ? "Norte" : "Sul");
-    }
-
-    // Método que identifica os obstáculos (outros robôs) nos ambientes em que o robô está
-    public ArrayList<Robo> identificarObstaculo() {
-        ArrayList<Robo> obstaculos = new ArrayList<>();  // Cria uma lista para armazenar os obstáculos
-
-        // Para cada robô no ambiente, adiciona à lista de obstáculos
-        for (Robo robo : ambiente.getRobos())
-            obstaculos.add(robo);  // Adiciona o robô à lista de obstáculos
-            
-        return obstaculos;  // Retorna a lista de obstáculos
     }
 
     // Método que retorna a posição atual do robô como um par (X, Y)

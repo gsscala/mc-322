@@ -1,4 +1,8 @@
 // A classe RoboAleatorio herda da classe RoboAereo e representa um robô aéreo que se move e altera sua altitude aleatoriamente
+
+import ambiente.Ambiente;
+import robos.RoboAereo;
+
 public class RoboAleatorio extends RoboAereo {
 
     // Construtor da classe RoboAleatorio, que inicializa o robô com nome, posição (X e Y), direção e altitude máxima

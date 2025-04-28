@@ -1,4 +1,7 @@
 // A classe RoboAtirador herda da classe RoboAereo e representa um robô aéreo armado com a capacidade de atirar
+
+import ambiente.Ambiente;
+
 public class RoboAtirador extends RoboAereo {
     // Declaração da variável privada arma, que armazena o nome da arma do robô (inicializada como "Ak-47")
     private String arma = "Ak-47";

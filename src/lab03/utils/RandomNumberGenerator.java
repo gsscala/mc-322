@@ -1,3 +1,4 @@
+package utils;
 // Importa a classe Random da biblioteca java.util, que será usada para gerar números aleatórios
 import java.util.Random;
 

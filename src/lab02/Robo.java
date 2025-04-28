@@ -1,6 +1,8 @@
 // Importa a classe ArrayList da biblioteca java.util, que será usada para armazenar objetos em uma lista dinâmica
 import java.util.ArrayList;
 
+import ambiente.Ambiente;
+
 // Declaração da classe Robo, que representa um robô com posição e direção em um ou mais ambientes
 public class Robo {
     // Declaração das variáveis privadas: nome, posição (X e Y), direção e lista de ambientes

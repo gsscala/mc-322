@@ -1,5 +1,6 @@
+package utils;
 // Declaração da classe Pair, que representa um par de valores inteiros
-class Pair {
+public class Pair {
     // Declaração das variáveis privadas f e s, que armazenam os dois valores do par
     private int f;
     private int s;
