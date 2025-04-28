@@ -4,3 +4,6 @@
 ### Dentro da pasta de cada lab, basta compilar e executar o arquivo Main.java. Pode-se fazê-lo com os seguintes comandos:
 #### javac -d bin src/lab02/*.java
 #### java -cp bin lab##.Main
+
+javac -d bin $(find src/lab03/ -name "*.java")
+java -cp bin Main
