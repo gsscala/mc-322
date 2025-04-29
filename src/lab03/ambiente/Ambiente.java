@@ -10,6 +10,7 @@ public class Ambiente {
     private int largura; // eixos x e y (mapa quadrado)
     private int altura; // eixo z (""altura"")
     private String nome;
+    private int umidade;
     
     // Criação de uma lista (ArrayList) para armazenar os objetos da classe Robo
     private ArrayList<Robo> robos = new ArrayList<>();
@@ -17,10 +18,11 @@ public class Ambiente {
     private ArrayList<Obstaculo> obstaculos = new ArrayList<>();
     
     // Construtor da classe Ambiente, que inicializa largura e altura com valores fornecidos
-    public Ambiente(int largura, int altura, String nome) {
+    public Ambiente(int largura, int altura, String nome, int umidade) {
         this.largura = largura;  // Atribui o valor de largura ao atributo da classe
-        this.altura = altura;    // Atribui o valor de altura ao atributo da classe
+        this.altura = altura;    // Atribui o valor da altura ao atributo da classe
         this.nome = nome;
+        this.umidade = umidade;
     }
 
     // Método getter para a variável altura (retorna o valor da altura)
@@ -51,6 +53,16 @@ public class Ambiente {
     // Método setter para a variável largura (define o valor da largura)
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    // Método getter para a variável umidade
+    public int getUmidade() {
+        return umidade;
+    }
+
+    // Método setter para a variável umidade
+    public void setUmidade(int umidade) {
+        this.umidade = umidade;
     }
 
     // Método que adiciona um objeto da classe Robo à lista de robôs e associa o ambiente ao robô
@@ -92,9 +104,12 @@ public class Ambiente {
         }
 
         for (Obstaculo o : this.getObstaculos()) {
-            // checa se esta nos bounds de um obstaculo
             if (o.dentroDosLimites(posicaoX, posicaoY, altitude)) {
                 if (o.handleColisao(roboAtual)) {
+
+                    if(!roboAtual.getIsVivo())
+                        removerRobo(roboAtual);
+
                     return true;
 
                 }
@@ -105,32 +120,28 @@ public class Ambiente {
     }
 
     public boolean hasObstacle(int posicaoX, int posicaoY, int altitude) {
-        // Verifica colisão com robôs
         for (Robo r : this.getRobos()) {
             if (posicaoX == r.getPosicaoX() && posicaoY == r.getPosicaoY() && altitude == r.getAltitude()) {
-                return true; // Existe robô na posição
+                return true;
             }
         }
     
-        // Verifica colisão com obstáculos
         for (Obstaculo o : this.getObstaculos()) {
             if (o.dentroDosLimites(posicaoX, posicaoY, altitude)) {
-                return true; // Existe obstáculo na posição
+                return true;
             }
         }
     
-        return false; // Nada encontrado
+        return false;
     }
     
-
     // Método que verifica se as coordenadas (x, y) estão dentro dos limites do ambiente
     public boolean dentroDosLimites(int x, int y) {
-        return x >= 0 && x < this.largura && y >= 0 && y < this.altura;  // Verifica se x e y estão dentro dos limites
+        return x >= 0 && x < this.largura && y >= 0 && y < this.altura;
     }
 
     // Sobrecarga do método dentroDosLimites que também verifica a coordenada z e a altitude máxima
     public boolean dentroDosLimites(int x, int y, int z, int altitudeMaxima) {
         return x >= 0 && x < this.largura && y >= 0 && y < this.altura && z >= 0 && z < altitudeMaxima;
-        // Verifica se x, y e z estão dentro dos limites do ambiente e se a altitude está dentro do limite máximo
     }
 }

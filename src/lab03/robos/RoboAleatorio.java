@@ -24,7 +24,7 @@ public class RoboAleatorio extends RoboAereo {
             nx = RNGx.generate();
             ny = RNGy.generate();
             nz = RNGz.generate();
-        } while (!getAmbiente().hasObstacle(nx, ny, nz)); // Continua tentando enquanto houver colisão
+        } while (getAmbiente().hasObstacle(nx, ny, nz)); // Continua tentando enquanto houver colisão
     
         setPosicaoX(nx);
         setPosicaoY(ny);

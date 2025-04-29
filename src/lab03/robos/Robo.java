@@ -1,7 +1,10 @@
 package robos;
 // Importa a classe ArrayList da biblioteca java.util, que será usada para armazenar objetos em uma lista dinâmica
 
+import java.util.ArrayList;
+
 import ambiente.Ambiente;
+import sensores.Sensor;
 import utils.Pair;
 
 // Declaração da classe Robo, que representa um robô com posição e direção em um ou mais ambientes
@@ -12,9 +15,13 @@ public class Robo {
     private int posicaoY;
     private String direcao;
     private boolean isVivo = true;
+
+    private int bateria = 2000; 
     
     // Lista de ambientes onde o robô pode estar presente
     private Ambiente ambiente;
+
+    protected ArrayList<Sensor> sensores = new ArrayList<>();
 
     // Construtor da classe Robo, que inicializa o robô com nome, posições X e Y, e direção
     public Robo(String nome, int xIni, int yIni, String direcao) {
@@ -36,6 +43,21 @@ public class Robo {
         setPosicaoY(0);
     }
 
+    public void addSensor(Sensor sensor) {
+        for (Sensor s : sensores) {
+            if (s.getClass().equals(sensor.getClass())) {
+                System.out.println("Já existe um sensor do tipo " + sensor.getClass().getSimpleName() + " no robô.");
+                return; 
+            }
+        }
+        sensores.add(sensor);
+
+        sensor.setRobo(this);
+    }
+    
+    public ArrayList<Sensor> getSensores() {
+        return sensores;
+    }
     public boolean getIsVivo() {
         return isVivo;  
     }
@@ -67,6 +89,14 @@ public class Robo {
     // Método setter para a posição X do robô
     public void setPosicaoX(int posicaoX) {
         this.posicaoX = posicaoX;  // Define a posição X do robô
+    }
+
+    public int getBateria() {
+        return bateria;  
+    }
+
+    public void setBateria(int bateria) {
+        this.bateria = bateria;  
     }
 
     // Método getter para a posição X do robô
@@ -158,6 +188,9 @@ public class Robo {
 
             setPosicaoY(y + deltaY);
         }
+
+        setBateria(getBateria() - getAmbiente().getUmidade());
+        // perde um pouco de bateria devido a umidade do ar ao andar pelo vento
 
 
 

@@ -9,7 +9,6 @@ public class Obstaculo {
     private int posicaoY2;
     private TipoObstaculo tipo;
 
-    // Constructor
     public Obstaculo(int posicaoX1, int posicaoY1, int posicaoX2, int posicaoY2, TipoObstaculo tipo) {
         this.posicaoX1 = posicaoX1;
         this.posicaoY1 = posicaoY1;
@@ -60,26 +59,20 @@ public class Obstaculo {
         this.tipo = tipo;
     }
 
-    // Methods to access attributes from TipoObstaculo
-
-    // Check if the obstacle blocks passage
     public boolean isBloqueiaPassagem() {
         return tipo.isBloqueiaPassagem();
     }
 
-    // Get the height of the obstacle
     public int getAltura() {
         return tipo.getAltura();
     }
 
-    // Get the coefficient of friction for the obstacle
-    // public double getCoeficienteGrudento() {
-    //     return tipo.getCoeficienteGrudento();
-    // }
-
-    // Check if the obstacle is lethal
     public boolean isLetal() {
         return tipo.isLetal();
+    }
+
+    public int getNivelUmidade() {
+        return tipo.getNivelUmidade();
     }
 
     public boolean dentroDosLimites(int x, int y, int altura) {
@@ -96,24 +89,17 @@ public class Obstaculo {
             return true;
         }
 
+        if (getNivelUmidade() > 0) {
+            robo.setBateria(robo.getBateria() - 2*getNivelUmidade());
+
+            System.out.println("Você pisou em uma poça e se molhou!");
+
+            if (robo.getBateria() < 0) {
+                robo.setIsVivo(false);
+                return true;
+            }
+        }
 
         return false;
-    }   
-
-
-    // Method to describe the obstacle
-    // public String describe() {
-    //     String descricao = "Obstáculo do tipo " + tipo.name() +
-    //                        " [Altura: " + getAltura() + 
-    //                        ", Bloqueia passagem: " + isBloqueiaPassagem() + 
-    //                        ", Coeficiente Grudento: " + getCoeficienteGrudento() + 
-    //                        ", Letal: " + isLetal() + "]";
-    //     return descricao;
-    // }
-
-    // // Override toString for easier object representation
-    // @Override
-    // public String toString() {
-    //     return describe();
-    // }
+    }
 }
