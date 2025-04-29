@@ -43,7 +43,7 @@ Este repositório reúne os laboratórios da disciplina MC322 (Programação Ori
 ### Visão Geral da Arquitetura
 Cada laboratório incrementa o simulador com novas classes de robôs e componentes ambientais.
 - **Herança:** classes derivadas de `Robo` (e.g., `RoboAtirador`, `RoboTerrestre`, `RoboAereo`, `RoboAleatorio`).
-- **Composição:** elementos do ambiente, como obstáculos e sensores.
+- **Composição:** elementos do ambiente, como obstáculos.
 - **Diagrama de Classes:** mostra relacionamentos, atributos e métodos com suas respectivas visibilidades.
 
 <p align="center">
