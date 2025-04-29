@@ -1,0 +1,115 @@
+@startuml
+
+' ======================== CLASSES ========================
+
+class Main {
+    + main(String[] args) : void
+}
+
+class Ambiente {
+    - largura : int
+    - altura : int
+    - nome : String
+    - umidade : int
+    - robos : ArrayList<Robo>
+    - obstaculos : ArrayList<Obstaculo>
+    + adicionarRobo(robo: Robo) : void
+    + adicionarObstaculo(obstaculo: Obstaculo) : void
+    + getLargura() : int
+    + getAltura() : int
+}
+
+class Robo {
+    - nome : String
+    - posicaoX : int
+    - posicaoY : int
+    - direcao : String
+    - isVivo : boolean
+    - bateria : int
+    - ambiente : Ambiente
+    - sensores : ArrayList<Sensor>
+    + addSensor(sensor: Sensor) : void
+    + getNome() : String
+    + getPosicaoX() : int
+    + getPosicaoY() : int
+    + getDirecao() : String
+    + getAmbiente() : Ambiente
+}
+
+class RoboAereo {
+    - altitude : int
+    - altitudeMaxima : int
+    + getAltitude() : int
+    + setAltitude(altitude: int) : void
+}
+
+class RoboAleatorio {
+    + mover() : void
+}
+
+class RoboAtirador {
+    - arma : String
+    + atirar() : void
+    + getArma() : String
+    + setArma(arma: String) : void
+}
+
+class RoboTerrestre {
+    - velocidadeMaxima : int
+}
+
+class Obstaculo {
+    - xIni : int
+    - yIni : int
+    - xFim : int
+    - yFim : int
+    - tipo : TipoObstaculo
+}
+
+enum TipoObstaculo {
+    POCA
+    PEDRA
+    PREDIO
+    CACTO
+}
+
+class MenuInterativo {
+    + run() : void
+}
+
+' Sensores
+abstract class Sensor {
+    - alcance : int
+}
+
+class SensorProximidade {
+}
+
+class SensorUmidade {
+}
+
+' ======================== RELACIONAMENTOS ========================
+
+Main --> Ambiente
+Main --> RoboAleatorio
+Main --> RoboAtirador
+Main --> RoboTerrestre
+Main --> RoboAereo
+Main --> Robo
+Main --> MenuInterativo
+Main --> Obstaculo
+
+Ambiente "1" --> "*" Robo : contém
+Ambiente "1" --> "*" Obstaculo : contém
+
+Robo "1" *-- "*" Sensor : possui
+
+RoboAereo -|> Robo
+RoboAleatorio -|> RoboAereo
+RoboAtirador -|> RoboAereo
+RoboTerrestre -|> Robo
+
+SensorProximidade -|> Sensor
+SensorUmidade -|> Sensor
+
+@enduml
