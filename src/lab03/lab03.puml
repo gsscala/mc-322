@@ -14,9 +14,13 @@ class Ambiente {
     - robos : ArrayList<Robo>
     - obstaculos : ArrayList<Obstaculo>
     + adicionarRobo(robo: Robo) : void
+    + removerRobo(robo: Robo) : void
     + adicionarObstaculo(obstaculo: Obstaculo) : void
-    + getLargura() : int
-    + getAltura() : int
+    + removerObstaculo(obstaculo: Obstaculo) : void
+    + handleColisoes(posicaoX: int, posicaoY: int, altitude: int, roboAtual: Robo) : boolean
+    + hasObstacle(posicaoX: int, posicaoY: int, altitude: int) : boolean
+    + dentroDosLimites(x: int, y: int) : boolean
+    + dentroDosLimites(x: int, y: int, z: int, altitudeMaxima: int) : boolean
 }
 
 class Robo {
@@ -29,18 +33,12 @@ class Robo {
     - ambiente : Ambiente
     - sensores : ArrayList<Sensor>
     + addSensor(sensor: Sensor) : void
-    + getNome() : String
-    + getPosicaoX() : int
-    + getPosicaoY() : int
-    + getDirecao() : String
-    + getAmbiente() : Ambiente
+    + mover(deltaX: int, deltaY: int) : void
 }
 
 class RoboAereo {
     - altitude : int
     - altitudeMaxima : int
-    + getAltitude() : int
-    + setAltitude(altitude: int) : void
 }
 
 class RoboAleatorio {
@@ -50,12 +48,11 @@ class RoboAleatorio {
 class RoboAtirador {
     - arma : String
     + atirar() : void
-    + getArma() : String
-    + setArma(arma: String) : void
 }
 
 class RoboTerrestre {
     - velocidadeMaxima : int
+    + mover(int velocidade) : void
 }
 
 class Obstaculo {
@@ -64,17 +61,32 @@ class Obstaculo {
     - xFim : int
     - yFim : int
     - tipo : TipoObstaculo
+    + dentroDosLimites(x: int, y: int) : boolean
+    + handleColisao(robo: Robo) : boolean
 }
 
-enum TipoObstaculo {
-    POCA
-    PEDRA
-    PREDIO
-    CACTO
+class TipoObstaculo {
+    - altura : int
+    - bloqueiaPassagem : boolean
+    - letal : boolean
+    - nivelUmidade : int
+    - descricao : String
+    + POCA : TipoObstaculo
+    + PEDRA : TipoObstaculo
+    + PREDIO : TipoObstaculo
+    + CACTO : TipoObstaculo
 }
 
 class MenuInterativo {
+    - ambienteAtual : Ambiente
     + run() : void
+    + handleInput(input: String) : void
+    + showHelp() : void
+    + showRobos() : void
+    + showStatus() : void
+    + move(args: String[]) : void
+    + skill(args: String[]) : void
+    + monitorar(args: String[]) : void
 }
 
 ' Sensores
@@ -83,9 +95,11 @@ abstract class Sensor {
 }
 
 class SensorProximidade {
+    + monitorar() : void
 }
 
 class SensorUmidade {
+    + monitorar()
 }
 
 ' ======================== RELACIONAMENTOS ========================
@@ -102,6 +116,8 @@ Main --> Obstaculo
 Ambiente "1" --> "*" Robo : contém
 Ambiente "1" --> "*" Obstaculo : contém
 
+Obstaculo "1" --> "1" TipoObstaculo : possui
+
 Robo "1" *-- "*" Sensor : possui
 
 RoboAereo -|> Robo
@@ -111,5 +127,9 @@ RoboTerrestre -|> Robo
 
 SensorProximidade -|> Sensor
 SensorUmidade -|> Sensor
+
+MenuInterativo "1" --> Ambiente : interage com
+
+Sensor "1" --> "*" Obstaculo : detecta
 
 @enduml

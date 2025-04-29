@@ -11,3 +11,4 @@ public class SensorUmidade extends Sensor {
         System.out.printf("Sensor de Umidade ativado: Umidade atual do ambiente é %.2f\n", umidade);
     }
 }
+    

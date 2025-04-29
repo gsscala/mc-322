@@ -84,14 +84,16 @@ public class MenuInterativo {
         System.out.println("- end                          : Finaliza a simulação");
         System.out.println("- showRobos                    : Lista todos os robôs no ambiente");
         System.out.println("- status                       : Mostra posição e status dos robôs");
-        System.out.println("- move <nome_robo> <x> <y>     : Move o robô especificado pelo deslocamento (deltaX, deltaY)");
+        System.out.println(
+                "- move <nome_robo> <x> <y>     : Move o robô especificado pelo deslocamento (deltaX, deltaY)");
         System.out.println("- special <nome_robo> <ação> [...] : Executa uma habilidade especial de um robô");
         System.out.println("  Ações especiais:");
         System.out.println("    - RoboAtirador: atirar");
         System.out.println("    - RoboTerrestre: turbo <deltaX> <deltaY> <velocidade>");
         System.out.println("    - RoboAereo: subir <deltaZ> | descer <deltaZ>");
         System.out.println("    - RoboAleatorio: aleatorio");
-        System.out.println("- monitorar <nome_robo> <tipo_sensor> : Usa um sensor específico do robô para monitorar o ambiente");
+        System.out.println(
+                "- monitorar <nome_robo> <tipo_sensor> : Usa um sensor específico do robô para monitorar o ambiente");
         System.out.println("  Tipos de sensores:");
         System.out.println("    - proximidade");
         System.out.println("    - umidade");
@@ -106,12 +108,13 @@ public class MenuInterativo {
     private void showStatus() {
         System.out.println("Status dos robôs:");
         for (Robo robo : ambienteAtual.getRobos()) {
-            System.out.printf("%s (%s) - Posição: (%d, %d) - Bateria: %d%n",
-                robo.getNome(),
-                robo.getClass().getSimpleName(),
-                robo.getPosicaoX(),
-                robo.getPosicaoY(),
-                robo.getBateria());
+            System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d%n",
+                    robo.getNome(),
+                    robo.getClass().getSimpleName(),
+                    robo.getPosicaoX(),
+                    robo.getPosicaoY(),
+                    robo.getAltitude(),
+                    robo.getBateria());
         }
     }
 
@@ -131,7 +134,8 @@ public class MenuInterativo {
             int deltaX = Integer.parseInt(args[2]);
             int deltaY = Integer.parseInt(args[3]);
             robo.mover(deltaX, deltaY);
-            System.out.println(robo.getNome() + " movido para (" + robo.getPosicaoX() + ", " + robo.getPosicaoY() + ")");
+            System.out
+                    .println(robo.getNome() + " movido para (" + robo.getPosicaoX() + ", " + robo.getPosicaoY() + ")");
         } catch (NumberFormatException e) {
             System.out.println("Coordenadas inválidas. Use números inteiros para deltaX e deltaY.");
         }
@@ -142,21 +146,21 @@ public class MenuInterativo {
             System.out.println("Uso: special <nome_robo> <ação> [argumentos]");
             return;
         }
-    
+
         // Encontra o robô pelo nome
         Robo robo = findRobo(args[1]);
         if (robo == null) {
             System.out.println("Robô não encontrado: " + args[1]);
             return;
         }
-    
+
         // Ação a ser realizada
         String comando = args[2];
-    
+
         // Verifica se o robô é do tipo RoboAtirador e executa o comando de atirar
         if (robo instanceof RoboAtirador && comando.equalsIgnoreCase("atirar")) {
             ((RoboAtirador) robo).atirar();
-        } 
+        }
         // Verifica se o robô é do tipo RoboTerrestre e executa o comando de turbo
         else if (robo instanceof RoboTerrestre && comando.equalsIgnoreCase("turbo")) {
             if (args.length < 6) {
@@ -167,25 +171,26 @@ public class MenuInterativo {
             int deltaY = Integer.parseInt(args[4]);
             int velocidade = Integer.parseInt(args[5]);
             ((RoboTerrestre) robo).mover(deltaX, deltaY, velocidade);
-        } 
-        // Verifica se o robô é do tipo RoboAereo (ou RoboAleatorio, pois herda de RoboAereo) e executa os comandos de subir/descer
+        }
+        // Verifica se o robô é do tipo RoboAereo (ou RoboAleatorio, pois herda de
+        // RoboAereo) e executa os comandos de subir/descer
         else if (robo instanceof RoboAereo && comando.equalsIgnoreCase("subir")) {
             int deltaZ = Integer.parseInt(args[3]);
             ((RoboAereo) robo).subir(deltaZ);
         } else if (robo instanceof RoboAereo && comando.equalsIgnoreCase("descer")) {
             int deltaZ = Integer.parseInt(args[3]);
             ((RoboAereo) robo).descer(deltaZ);
-        } 
-        // Verifica se o robô é do tipo RoboAleatorio (herda de RoboAereo e RoboAtirador) e executa o comando aleatório
+        }
+        // Verifica se o robô é do tipo RoboAleatorio (herda de RoboAereo e
+        // RoboAtirador) e executa o comando aleatório
         else if (robo instanceof RoboAleatorio && comando.equalsIgnoreCase("aleatorio")) {
             ((RoboAleatorio) robo).mover();
-        } 
+        }
         // Caso o comando não corresponda a nenhuma ação válida
         else {
             System.out.println("Este robô não possui habilidade especial ou comando inválido.");
         }
     }
-    
 
     private void monitorar(String[] args) {
         if (args.length < 3) {
