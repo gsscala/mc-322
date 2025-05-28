@@ -43,6 +43,10 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, Sensoreavel 
         // feature de matar o robo
     }
 
+    public void executarTarefa() {
+        atirar();
+    }
+
     public void enviarMensagem(Comunicavel destinatario, String mensagem) throws RoboDesligadoException {
         // Verifica se o robô está ligado antes de enviar a mensagem
         

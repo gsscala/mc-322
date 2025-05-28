@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import ambiente.Ambiente;
 import ambiente.ForaMapaException;
 import sensores.Sensor;
-import utils.Pair;
 import entity.*;
 import obstaculos.ColisaoException;
 
@@ -45,7 +44,7 @@ public class Robo implements Entidade {
     // Método que adiciona um ambiente à lista de ambientes do robô
     public void setAmbiente(Ambiente ambiente) {
         this.ambiente = ambiente;  // Adiciona o ambiente à lista
-        ambiente.getMapa()[getPosicaoX()][getPosicaoY()][getAltitude()] = TipoEntidade.ROBO;  
+        ambiente.getMapa()[getPosicaoX()][getPosicaoY()][getAltitude()] = TipoEntidade.ROBO; // Atualiza o mapa do ambiente com a posição do robô
     }
 
     public void addSensor(Sensor sensor) {
@@ -150,11 +149,6 @@ public class Robo implements Entidade {
         return representacao;  
     }
 
-    public void moverMapa(int xi, int yi, int zi, int xf, int yf, int zf) {
-        getAmbiente().getMapa()[xi][yi][zi] = TipoEntidade.VAZIO;  // Limpa a posição inicial no mapa
-        getAmbiente().getMapa()[xf][yf][zf] = TipoEntidade.ROBO;  // Define a nova posição do robô no mapa
-    }
-
     // Testa mover na ordem eixo X/Y
     public void mover(int deltaX, int deltaY) { 
         int x = getPosicaoX();
@@ -219,7 +213,7 @@ public class Robo implements Entidade {
 
         setPosicaoX(xf);  // Atualiza a posição X do robô
         setPosicaoY(yf);  // Atualiza a posição Y do robô
-        moverMapa(x, y, getAltitude(), xf, yf, getAltitude());  // Atualiza o mapa do ambiente com a nova posição do robô
+        getAmbiente().moverRoboMapa(x, y, getAltitude(), xf, yf, getAltitude());  // Atualiza o mapa do ambiente com a nova posição do robô 
 
         setBateria(getBateria() - getAmbiente().getUmidade());
         // perde um pouco de bateria devido a umidade do ar ao andar pelo vento
@@ -231,9 +225,7 @@ public class Robo implements Entidade {
         this.direcao = (deltaY > 0 ? "Norte" : "Sul");
     }
 
-    // Método que retorna a posição atual do robô como um par (X, Y)
-    @Deprecated
-    public Pair exibirPosicao() {
-        return new Pair(getPosicaoX(), getPosicaoY());  // Retorna a posição como um par de valores
-    }
+    // public void executarTarefa() {
+    //     return;
+    // }
 }

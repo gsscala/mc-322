@@ -15,7 +15,7 @@ public class Main {
     // Método principal (entry point) da aplicação
     public static void main(String[] args) {
         // Criando o ambiente "ilhas_dog" com as dimensões 200x100 e capacidade para 200 robôs
-        Ambiente ilhas_dog = new Ambiente(100, 100, 80, "ilhas dog", 5);
+        Ambiente ilhas_dog = new Ambiente(75, 75, 40, "ilhas dog", 5);
         // Criando diferentes tipos de robôs com seus respectivos parâmetros
         RoboAleatorio roboaleatorio = new RoboAleatorio("random", 0, 0, "Norte", 50);  
         RoboAtirador roboatirador = new RoboAtirador("praprapra", 17, 13, "Leste", 100, "Ak-47");
@@ -45,13 +45,13 @@ public class Main {
         ilhas_dog.adicionarEntidade(robo);
 
         // Criando obstáculos
-        Obstaculo pocao = new Obstaculo(10, 10, 15, 15, TipoObstaculo.POCA); // Tipo POCA
+        Obstaculo poca = new Obstaculo(10, 10, 15, 15, TipoObstaculo.POCA); // Tipo POCA
         Obstaculo pedra = new Obstaculo(20, 20, 25, 25, TipoObstaculo.PEDRA); // Tipo PEDRA
         Obstaculo predio = new Obstaculo(30, 30, 35, 35, TipoObstaculo.PREDIO); // Tipo PREDIO
         Obstaculo cacto = new Obstaculo(40, 40, 45, 45, TipoObstaculo.CACTO); // Tipo CACTO
 
         // Adicionando os obstáculos ao ambiente
-        ilhas_dog.adicionarEntidade(pocao);
+        ilhas_dog.adicionarEntidade(poca);
         ilhas_dog.adicionarEntidade(pedra);
         ilhas_dog.adicionarEntidade(predio);
         ilhas_dog.adicionarEntidade(cacto);

@@ -111,39 +111,22 @@ public class Ambiente {
         }
     }
 
+    public void moverRoboMapa(int xi, int yi, int zi, int xf, int yf, int zf) {
+        getMapa()[xi][yi][zi] = TipoEntidade.VAZIO;  // Limpa a posição inicial no mapa
+        getMapa()[xf][yf][zf] = TipoEntidade.ROBO;  // Define a nova posição do robô no mapa
+    }
+
+
+
     // // Método que adiciona um objeto da classe Robo à lista de robôs e associa o ambiente ao robô
     // public void adicionarRobo(Robo r) {
     //     robos.add(r);           // Adiciona o robô à lista de robôs
     //     r.setAmbiente(this);    // Chama o método addAmbiente no objeto Robo para associar o ambiente a ele
     // }
 
-    // public void removerRobo(Robo r) {
-    //     robos.removeIf(robo -> robo == r);
-    // }
-    // // usar remover robo 
-
-    // // Método getter que retorna a lista de robôs
-    // public ArrayList<Robo> getRobos() {
-    //     return this.robos;  // Retorna a lista de robôs
-    // }
-
-    // public void adicionarObstaculo(Obstaculo o) {
-    //     obstaculos.add(o); // Adiciona o obstáculo à lista
-    // }
-    
-    // public void removerObstaculo(Obstaculo o) {
-    //     obstaculos.removeIf(obstaculo -> obstaculo == o); // Remove o obstáculo exato
-    // }
-    
-    // public ArrayList<Obstaculo> getObstaculos() {
-    //     return this.obstaculos; // Retorna a lista de obstáculos
-    // }
-
     public void adicionarEntidade(Entidade e) {
         entidades.add(e); 
-        if (e instanceof Robo) {
-            ((Robo) e).setAmbiente(this); // Se a entidade for um Robo, associa o ambiente a ele
-        }
+        e.setAmbiente(this);
     }
 
     public void removerEntidade(Entidade e) {

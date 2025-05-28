@@ -2,6 +2,7 @@ package obstaculos;
 
 import robos.EstadoRobo;
 import robos.Robo;
+import ambiente.Ambiente;
 import entity.*;
 
 public class Obstaculo implements Entidade {
@@ -12,6 +13,8 @@ public class Obstaculo implements Entidade {
     private TipoObstaculo tipoObstaculo;
     private TipoEntidade tipoEntidade = TipoEntidade.OBSTACULO;
     private char representacao = 'X';
+
+    private Ambiente ambiente;
 
     public Obstaculo(int posicaoX1, int posicaoY1, int posicaoX2, int posicaoY2, TipoObstaculo tipoObstaculo) {
         this.posicaoX1 = posicaoX1;
@@ -106,6 +109,21 @@ public class Obstaculo implements Entidade {
         return tipoObstaculo.getNivelUmidade();
     }
 
+    public void setAmbiente(Ambiente ambiente) {
+        this.ambiente = ambiente;
+        for (int x = getPosicaoX1(); x <= getPosicaoX2(); x++) {
+            for (int y = getPosicaoY1(); y <= getPosicaoY2(); y++) {
+                for (int z = 0; z <= getAltura(); z++) {
+                    ambiente.getMapa()[x][y][z] = tipoEntidade;
+                }
+            }
+        }
+    }
+
+    public Ambiente getAmbiente() {
+        return ambiente;
+    }
+
     public boolean dentroDosLimites(int x, int y, int altura) {
         return x >= posicaoX1 && x <= posicaoX2 && y >= posicaoY1 && y <= posicaoY2 && altura <= getAltura();
     }   
@@ -130,7 +148,7 @@ public class Obstaculo implements Entidade {
 
             System.out.println("Você pisou em uma poça e se molhou!");
 
-            if (robo.getBateria() < 0) {
+            if (robo.getBateria() <= 0) {
                 robo.setEstado(EstadoRobo.MORTO);
                 throw new ColisaoException("Robô morreu por falta de bateria após pisar em uma poça: " + getDescricao());
             }

@@ -45,7 +45,7 @@ public class RoboAereo extends Robo {
             novaAltitude = getAltitudeMaxima()-1;
             System.out.println("Altitude máxima atingida!");
         } 
-        moverMapa(getPosicaoX(), getPosicaoY(), getAltitude(), getPosicaoX(), getPosicaoY(), novaAltitude); // Vem antes do set
+        getAmbiente().moverRoboMapa(getPosicaoX(), getPosicaoY(), getAltitude(), getPosicaoX(), getPosicaoY(), novaAltitude); // Vem antes do set
         setAltitude(novaAltitude);
     }
     

@@ -49,7 +49,7 @@ public class RoboTerrestre extends Robo implements Comunicavel {
             novaPosX = Math.max(0, Math.min(novaPosX, getAmbiente().getLargura() - 1));
             novaPosY = Math.max(0, Math.min(novaPosY, getAmbiente().getProfundidade() - 1));
 
-            moverMapa(getPosicaoX(), getPosicaoY(), getAltitude(), novaPosX, novaPosY, getAltitude()); // Vem antes do set
+            getAmbiente().moverRoboMapa(getPosicaoX(), getPosicaoY(), getAltitude(), novaPosX, novaPosY, getAltitude()); // Vem antes do set
 
             setPosicaoX(novaPosX);
             setPosicaoY(novaPosY);
