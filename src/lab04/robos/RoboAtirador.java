@@ -2,10 +2,13 @@ package robos;
 // A classe RoboAtirador herda da classe RoboAereo e representa um robô aéreo armado com a capacidade de atirar
 
 import comunicacao.Comunicavel;
+import comunicacao.ErroComunicacaoException;
+import entity.Entidade;
 import sensores.Sensor;
-import sensores.Sensoreavel;
+import utils.RandomNumberGenerator;
+import utils.RandomStringGenerator;
 
-public class RoboAtirador extends RoboAereo implements Comunicavel, Sensoreavel {
+public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSaco {
     // Declaração da variável privada arma, que armazena o nome da arma do robô (inicializada como "Ak-47")
     private String arma = "Ak-47";
 
@@ -43,10 +46,7 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, Sensoreavel 
         // feature de matar o robo
     }
 
-    public void executarTarefa() {
-        atirar();
-    }
-
+    
     public void enviarMensagem(Comunicavel destinatario, String mensagem) throws RoboDesligadoException {
         // Verifica se o robô está ligado antes de enviar a mensagem
         
@@ -62,6 +62,18 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, Sensoreavel 
             throw new RoboDesligadoException("Remetente desligado, não é possível enviar mensagem.");  // Lança exceção se o robô estiver desligado
         }
     }       
+
+    public void encherOSaco(Comunicavel robo, int numeroDeVezes) throws RoboDesligadoException {
+        RandomNumberGenerator numGen = new RandomNumberGenerator(1, 95);
+        for (int i = 0; i < numeroDeVezes; i++){
+            
+            int stringSize = numGen.generate();
+            int numCharacters = numGen.generate();
+
+            String mensagem = RandomStringGenerator.generatePrintableRandomString(stringSize, numCharacters);
+            enviarMensagem(robo, mensagem);
+        }
+    }
 
     public void receberMensagem(String mensagem) throws RoboDesligadoException {
         // Verifica se o robô está ligado antes de receber a mensagem
@@ -80,6 +92,38 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, Sensoreavel 
         }
         else {
             throw new RoboDesligadoException("Robô desligado não consegue usar sensores");
+        }
+    }
+
+    // TODO: ARRUMAR SPLIT MENSAGEM
+
+    private Robo findRobo(String nome) {
+        for (Entidade e : this.getAmbiente().getEntidades()) {
+            if (!(e instanceof Robo)) {
+                continue; // Ignora entidades que não são robôs
+            }
+            Robo robo = (Robo) e;
+            if (robo.getNome().equalsIgnoreCase(nome)) {
+                return robo;
+            }
+        }
+        return null;
+    }
+
+    // kkkkkk sla pq q essa porra ta vermelha vsf
+
+    public void executarTarefa(String tarefa, String[] args) throws ErroComunicacaoException, RoboDesligadoException {
+        switch (tarefa) {
+            case "atirar":
+                atirar();
+                break;
+            case "encherOSaco":
+                Robo robo = findRobo(args[0]);
+                if (!(robo instanceof Comunicavel))
+                    throw new ErroComunicacaoException("Robô não comunicável");
+                encherOSaco((Comunicavel)findRobo(args[0]), Integer.parseInt(args[1]));
+            default:
+                break;
         }
     }
 }

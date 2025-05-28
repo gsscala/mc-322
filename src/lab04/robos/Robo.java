@@ -1,16 +1,17 @@
 package robos;
-// Importa a classe ArrayList da biblioteca java.util, que será usada para armazenar objetos em uma lista dinâmica
 
+// Importa a classe ArrayList da biblioteca java.util, que será usada para armazenar objetos em uma lista dinâmica
 import java.util.ArrayList;
 
 import ambiente.Ambiente;
 import ambiente.ForaMapaException;
 import sensores.Sensor;
+import utils.DistanceCalculator;
 import entity.*;
 import obstaculos.ColisaoException;
 
 // Declaração da classe Robo, que representa um robô com posição e direção em um ou mais ambientes
-public class Robo implements Entidade {
+public class Robo implements Entidade, Ladrao {
     // Declaração das variáveis privadas: nome, posição (X e Y), direção e lista de ambientes
     private String nome;
     private int posicaoX;
@@ -225,7 +226,24 @@ public class Robo implements Entidade {
         this.direcao = (deltaY > 0 ? "Norte" : "Sul");
     }
 
-    // public void executarTarefa() {
-    //     return;
-    // }
+    public void roubar(){
+        for (Entidade entidade : this.getAmbiente().getEntidades())
+            if (entidade instanceof Robo && this != entidade){
+                Robo robo = (Robo)entidade;
+                int distance = (int) (new DistanceCalculator(this, robo).calculateDistance());
+                int db = (int) (robo.getBateria() / distance);
+                robo.setBateria(robo.getBateria() - db);
+                this.setBateria(this.getBateria() + db);
+            }
+    }
+
+    public void executarTarefa(String tarefa, String[] args) {
+        switch (tarefa) {
+            case "roubar":
+                roubar();
+                break;
+            default:
+                break;
+        }
+    }
 }

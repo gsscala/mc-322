@@ -63,4 +63,16 @@ public class RoboAereo extends Robo {
             setAltitude(novaAltitude);
         }
     }
+
+    public void executarTarefa(String tarefa, String[] args) {
+        switch (tarefa) {
+            case "subir":
+                subir(Integer.parseInt(args[0]));
+                break;
+            case "descer":
+                descer(Integer.parseInt(args[0]));
+            default:
+                break;
+        }
+    }
 }

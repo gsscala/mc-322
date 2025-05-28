@@ -172,7 +172,6 @@ public class MenuInterativo {
             System.out.println("Uso: special <nome_robo> <ação> [argumentos]");
             return;
         }
-
         // Encontra o robô pelo nome
         Robo robo = findRobo(args[1]);
         if (robo == null) {
