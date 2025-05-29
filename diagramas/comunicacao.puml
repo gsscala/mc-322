@@ -1,0 +1,29 @@
+@startuml
+!theme plain
+skinparam class {
+    BackgroundColor<<Interface>> #A9DCDF
+    BackgroundColor<<Class>> #D5E8D4
+    BackgroundColor<<Exception>> #FF9999
+}
+
+package comunicacao #FFE6CC {
+    interface Comunicavel <<Interface>> {
+        + enviarMensagem()
+        + receberMensagem()
+    }
+
+    class CentralComunicacao {
+        + registrarMensagem()
+        + exibirMensagens()
+    }
+
+    class ErroComunicacaoException <<Exception>> {}
+}
+
+' External references
+class "Robo" as Robo #DAF7A6
+
+' Relationships
+CentralComunicacao ..> Comunicavel: uses in messages
+Comunicavel <|.. Robo: implementado por
+@enduml

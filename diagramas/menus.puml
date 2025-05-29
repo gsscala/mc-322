@@ -1,0 +1,27 @@
+@startuml
+!theme plain
+skinparam class {
+    BackgroundColor<<Class>> #D5E8D4
+}
+
+package menus #FFD8E6 {
+    class MenuInterativo {
+        + run()
+        - handleInput()
+    }
+}
+
+' External references
+class "Ambiente" as Ambiente #CCF2FF
+class "Robo" as Robo #DAF7A6
+class "RoboNotFoundException" as RoboNotFoundException #DAF7A6
+class "TaskNotFoundException" as TaskNotFoundException #DAF7A6
+class "NaoSensoriavelException" as NaoSensoriavelException #FFCC99
+
+' Relationships
+MenuInterativo --> Ambiente
+MenuInterativo ..> Robo: uses
+MenuInterativo ..> RoboNotFoundException
+MenuInterativo ..> TaskNotFoundException
+MenuInterativo ..> NaoSensoriavelException
+@enduml

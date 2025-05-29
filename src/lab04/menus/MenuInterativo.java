@@ -231,7 +231,7 @@ public class MenuInterativo {
                 Robo robo = (Robo) e;
 
                 // Exibe o status do robô, incluindo nome, tipo, posição e bateria
-                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d - Estado: %s%n",
+                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d - Estado: %s%n - %s%n",
                     robo.getNome(),
                     robo.getClass().getSimpleName(),
                     robo.getPosicaoX(),
@@ -239,7 +239,8 @@ public class MenuInterativo {
                     robo.getAltitude(),
                     robo.getBateria(),
                     robo.getEstado() == EstadoRobo.LIGADO ? "ligado" : 
-                    robo.getEstado() == EstadoRobo.DESLIGADO ? "desligado" : "morto"
+                    robo.getEstado() == EstadoRobo.DESLIGADO ? "desligado" : "morto",
+                    robo.getDescricao()
                 );
             }
         }
