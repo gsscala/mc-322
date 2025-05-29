@@ -8,8 +8,12 @@ import java.util.regex.*;
 
 import robos.EstadoRobo;
 import robos.Robo;
+import robos.RoboAereo;
+import robos.RoboAleatorio;
+import robos.RoboAtirador;
 import robos.RoboDesligadoException;
 import robos.RoboNotFoundException;
+import robos.RoboTerrestre;
 import robos.TaskNotFoundException;
 import ambiente.Ambiente;
 import comunicacao.Comunicavel;
@@ -83,6 +87,7 @@ public class MenuInterativo {
                 break;
 
             case "tarefas":
+                tarefas(args);
                 break;
 
             case "status":
@@ -153,6 +158,39 @@ public class MenuInterativo {
         System.out.println(robo.setEstado(robo.getEstado() == EstadoRobo.DESLIGADO ? EstadoRobo.LIGADO : EstadoRobo.DESLIGADO));
     }
 
+    private void tarefas(String [] args){
+        Robo robo;
+        
+        try {
+            robo = findRobo(args[1]);
+        }catch (RoboNotFoundException e){
+            System.err.println(e.getMessage());
+            return;
+        }
+
+        if (robo.getClass() == Robo.class) {
+            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+        } 
+        else if (robo.getClass() == RoboAereo.class) {
+            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Subir : aumenta altitude do robô");
+            System.out.println("- Descer : diminui a altitude do robô");
+        } 
+        else if (robo.getClass() == RoboAleatorio.class) {
+            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Explodir : mata todos em os robôs em um raio R");
+        } 
+        else if (robo.getClass() == RoboAtirador.class) {
+            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Subir : aumenta altitude do robô");
+            System.out.println("- Descer : diminui a altitude do robô");
+            System.out.println("- Atirar : mata todos os robôs com a mesma coordenada x o y do robô");
+            System.out.println("- EncherOSaco : Manda um número de mensagens aleatórias (spam) para o robô escolhido");
+        } 
+        else if (robo.getClass() == RoboTerrestre.class) {
+            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+        } 
+    }
 
     private void showStatus() {
         // Mostra status do ambiente
