@@ -9,6 +9,7 @@ import sensores.Sensor;
 import utils.DistanceCalculator;
 import entity.*;
 import obstaculos.ColisaoException;
+import comunicacao.ErroComunicacaoException;
 
 // Declaração da classe Robo, que representa um robô com posição e direção em um ou mais ambientes
 public class Robo implements Entidade, Ladrao {
@@ -86,8 +87,9 @@ public class Robo implements Entidade, Ladrao {
         return estado;  
     }  
 
-    public void setEstado(EstadoRobo estado) {
-        this.estado = estado;  
+    public String setEstado(EstadoRobo estado) {
+        this.estado = estado;
+        return String.format("Robô %s está agora %s.", getNome(), estado == EstadoRobo.DESLIGADO ? "desligado" : estado == EstadoRobo.LIGADO ? "ligado" : "morto");
     }
 
     // Método getter para o nome do robô
@@ -237,7 +239,7 @@ public class Robo implements Entidade, Ladrao {
             }
     }
 
-    public void executarTarefa(String tarefa, String[] args) {
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
         switch (tarefa) {
             case "roubar":
                 roubar();

@@ -1,11 +1,14 @@
 package menus;
 
 import java.util.Scanner;
+
+import robos.EstadoRobo;
 import robos.Robo;
 import robos.RoboAleatorio;
 import robos.RoboAereo;
 import robos.RoboAtirador;
 import robos.RoboDesligadoException;
+import robos.RoboNotFoundException;
 import robos.RoboTerrestre;
 import ambiente.Ambiente;
 import comunicacao.CentralComunicacao;
@@ -69,7 +72,7 @@ public class MenuInterativo {
                 move(args);
                 break;
 
-            case "special":
+            case "executartarefa":
                 skill(args);
                 break;
 
@@ -88,7 +91,10 @@ public class MenuInterativo {
             case "showmapa":
                 showMapa(args);
                 break;
-
+            
+            case "mudarestado":
+                mudarestado(args);
+                break;
 
             default:
                 System.out.println("Comando inválido. Digite 'help' para ver os comandos disponíveis.");
@@ -101,9 +107,10 @@ public class MenuInterativo {
         System.out.println("- end                          : Finaliza a simulação");
         System.out.println("- showRobos                    : Lista todos os robôs no ambiente");
         System.out.println("- status                       : Mostra posição e status dos robôs");
+        System.out.println("- mudarestado <nome_robo>      : Desliga (se estiver ligado) ou liga (se estiver desligado) o robô");
         System.out.println(
                 "- move <nome_robo> <x> <y>     : Move o robô especificado pelo deslocamento (deltaX, deltaY)");
-        System.out.println("- special <nome_robo> <ação> [...] : Executa uma habilidade especial de um robô");
+        System.out.println("- executartarefa <nome_robo> <ação> [...] : Executa uma habilidade especial de um robô");
         System.out.println("  Ações especiais:");
         System.out.println("    - RoboAtirador: atirar");
         System.out.println("    - RoboTerrestre: turbo <deltaX> <deltaY> <velocidade>");
@@ -114,6 +121,21 @@ public class MenuInterativo {
         System.out.println("  Tipos de sensores:");
         System.out.println("    - proximidade");
         System.out.println("    - umidade");
+    }
+
+    private void mudarestado(String [] args) throws RoboNotFoundException{
+        Robo robo = findRobo(args[0]);
+        try:
+            if (robo == null){
+                throw new RoboNotFoundException("Robo não encontrado");
+            }
+        catch
+        if (robo.getEstado() == EstadoRobo.MORTO){
+            System.out.printf("Robô %s está morto, isto é inalterável!", robo.getNome());
+            return;
+        }
+        
+        System.out.println(robo.setEstado(robo.getEstado() == EstadoRobo.DESLIGADO ? EstadoRobo.LIGADO : EstadoRobo.DESLIGADO));
     }
 
     private void showRobos() {
@@ -133,13 +155,15 @@ public class MenuInterativo {
                 Robo robo = (Robo) e;
                 
                 // Exibe o status do robô, incluindo nome, tipo, posição e bateria
-                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d%n",
-                        robo.getNome(),
-                        robo.getClass().getSimpleName(),
-                        robo.getPosicaoX(),
-                        robo.getPosicaoY(),
-                        robo.getAltitude(),
-                        robo.getBateria());
+                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d%n - Estado: %s",
+                robo.getNome(),
+                robo.getClass().getSimpleName(),
+                robo.getPosicaoX(),
+                robo.getPosicaoY(),
+                robo.getAltitude(),
+                robo.getBateria(),
+                robo.getEstado() == EstadoRobo.LIGADO ? "ligado" : 
+                robo.getEstado() == EstadoRobo.DESLIGADO ? "desligado" : "morto");
             }
         }
     }
@@ -243,7 +267,7 @@ public class MenuInterativo {
     }
         
 
-    private Robo findRobo(String nome) {
+    private Robo findRobo(String nome) throws RoboNotFoundException {
         for (Entidade e : ambienteAtual.getEntidades()) {
             if (!(e instanceof Robo)) {
                 continue; // Ignora entidades que não são robôs
@@ -253,7 +277,7 @@ public class MenuInterativo {
                 return robo;
             }
         }
-        return null;
+        throw new RoboNotFoundException("Robô não encontrado");
     }
 
     private void comunicar(String[] args) {
@@ -263,11 +287,11 @@ public class MenuInterativo {
             return;
         }
 
-        Robo remetente = findRobo(args[1]);
-        if (remetente == null) {
-            System.out.println("Robô remetente não encontrado: " + args[1]);
-            return;
-        }
+        Robo remetente;
+
+        try:
+            remetente = findRobo(args[1]);
+        catch 
         // try catch solução mais funcional 
 
         Robo destinario = findRobo(args[2]);

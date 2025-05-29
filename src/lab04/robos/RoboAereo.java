@@ -1,6 +1,8 @@
 package robos;
 // A classe RoboAereo herda da classe Robo e adiciona funcionalidades específicas para robôs que podem voar
 
+import comunicacao.ErroComunicacaoException;
+
 public class RoboAereo extends Robo {
     // Declaração da variável privada altitude, que armazena a altura atual do robô aéreo
     private int altitude = 0;
@@ -64,13 +66,17 @@ public class RoboAereo extends Robo {
         }
     }
 
-    public void executarTarefa(String tarefa, String[] args) {
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException{
         switch (tarefa) {
             case "subir":
                 subir(Integer.parseInt(args[0]));
                 break;
             case "descer":
                 descer(Integer.parseInt(args[0]));
+                break;
+            case "roubar":
+                roubar();
+                break;
             default:
                 break;
         }

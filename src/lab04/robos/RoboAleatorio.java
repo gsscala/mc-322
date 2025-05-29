@@ -2,6 +2,7 @@ package robos;
 // A classe RoboAleatorio herda da classe RoboAereo e representa um robô aéreo que se move e altera sua altitude aleatoriamente
 
 import utils.RandomNumberGenerator;
+import comunicacao.ErroComunicacaoException;
 import utils.DistanceCalculator;
 
 public class RoboAleatorio extends RoboAereo implements Explodidor{
@@ -41,6 +42,19 @@ public class RoboAleatorio extends RoboAereo implements Explodidor{
             robo instanceof Robo && 
             new DistanceCalculator(robo, this).calculateDistance() <= radius
         );
+    }
+
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
+        switch (tarefa) {
+            case "roubar":
+                roubar();
+                break;
+            case "explodir":
+                explodir(Integer.parseInt(args[0]));
+                break;
+            default:
+                break;
+        }
     }
     
 }

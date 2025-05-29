@@ -1,6 +1,7 @@
 package robos;
 import comunicacao.Comunicavel;
 // A classe RoboTerrestre herda da classe Robo e representa um robô terrestre com uma velocidade máxima
+import comunicacao.ErroComunicacaoException;
 
 public class RoboTerrestre extends Robo implements Comunicavel {
     // Declaração da variável privada velocidadeMaxima, que armazena a velocidade máxima do robô terrestre      
@@ -87,6 +88,15 @@ public class RoboTerrestre extends Robo implements Comunicavel {
         }   
     }
 
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
+        switch (tarefa) {
+            case "roubar":
+                roubar();
+                break;
+            default:
+                break;
+        }
+    }
 
 
 }

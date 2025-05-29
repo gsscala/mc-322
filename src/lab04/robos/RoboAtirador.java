@@ -110,9 +110,7 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
         return null;
     }
 
-    // kkkkkk sla pq q essa porra ta vermelha vsf
-
-    public void executarTarefa(String tarefa, String[] args) throws ErroComunicacaoException, RoboDesligadoException {
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
         switch (tarefa) {
             case "atirar":
                 atirar();
@@ -122,6 +120,16 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
                 if (!(robo instanceof Comunicavel))
                     throw new ErroComunicacaoException("Robô não comunicável");
                 encherOSaco((Comunicavel)findRobo(args[0]), Integer.parseInt(args[1]));
+                break;
+            case "roubar":
+                roubar();
+                break;
+            case "subir":
+                subir(Integer.parseInt(args[0]));
+                break;
+            case "descer":
+                descer(Integer.parseInt(args[0]));
+                break;
             default:
                 break;
         }
