@@ -1,135 +1,266 @@
 @startuml
 
-' ======================== CLASSES ========================
+' Classes, interfaces, enums, and exceptions with attributes and methods
 
 class Main {
     + main(String[] args) : void
+    + <init>() : Main
+}
+
+class ForaMapaException {
+    + <init>() : ForaMapaException
+    + <init>(String message) : ForaMapaException
+    + <init>(Throwable cause) : ForaMapaException
 }
 
 class Ambiente {
-    - largura : int
-    - altura : int
-    - nome : String
-    - umidade : int
-    - robos : ArrayList<Robo>
-    - obstaculos : ArrayList<Obstaculo>
-    + adicionarRobo(robo: Robo) : void
-    + removerRobo(robo: Robo) : void
-    + adicionarObstaculo(obstaculo: Obstaculo) : void
-    + removerObstaculo(obstaculo: Obstaculo) : void
-    + handleColisoes(posicaoX: int, posicaoY: int, altitude: int, roboAtual: Robo) : boolean
-    + hasObstacle(posicaoX: int, posicaoY: int, altitude: int) : boolean
-    + dentroDosLimites(x: int, y: int) : boolean
-    + dentroDosLimites(x: int, y: int, z: int, altitudeMaxima: int) : boolean
+    + mapa : char[][]
+    + entidades : List<Entidade>
+    + sensores : List<Sensor>
+    + comunicacao : CentralComunicacao
+    + estado : EstadoRobo
+    + rng : RandomNumberGenerator
+    + calculator : DistanceCalculator
+    + <init>() : Ambiente
+    + carregarMapa(String filePath) : void
+    + getEntidadeAt(int x, int y) : Entidade
+    + adicionarEntidade(Entidade e) : void
+    + removerEntidade(Entidade e) : void
+    + executarComando(Robo r, String comando) : void
+    + notificarComunicacao(String message) : void
+    + detectarColisao(Robo r) : void
+    + verificarLimites(int x, int y) : void
+    + getMapa() : char[][]
+    + toString() : String
 }
 
-class Robo {
-    - nome : String
-    - posicaoX : int
-    - posicaoY : int
-    - direcao : String
-    - isVivo : boolean
-    - bateria : int
-    - ambiente : Ambiente
-    - sensores : ArrayList<Sensor>
-    + addSensor(sensor: Sensor) : void
-    + mover(deltaX: int, deltaY: int) : void
+class CentralComunicacao {
+    + observers : List<Comunicavel>
+    + <init>() : CentralComunicacao
+    + register(Comunicavel c) : void
+    + unregister(Comunicavel c) : void
+    + notifyAll(String message) : void
 }
 
-class RoboAereo {
-    - altitude : int
-    - altitudeMaxima : int
+interface Comunicavel {
+    + notify(String message) : void
+    + onError(Throwable error) : void
+    + <init>()
 }
 
-class RoboAleatorio {
-    + mover() : void
+class ErroComunicacaoException {
+    + <init>() : ErroComunicacaoException
+    + <init>(String message) : ErroComunicacaoException
+    + <init>(Throwable cause) : ErroComunicacaoException
+    + getMessage() : String
+    + toString() : String
+    + printStackTrace() : void
 }
 
-class RoboAtirador {
-    - arma : String
-    + atirar() : void
+enum TipoEntidade {
+    ROBOT,
+    OBSTACLE,
+    <init>(String name)
 }
 
-class RoboTerrestre {
-    - velocidadeMaxima : int
-    + mover(int velocidade) : void
-}
-
-class Obstaculo {
-    - xIni : int
-    - yIni : int
-    - xFim : int
-    - yFim : int
-    - tipo : TipoObstaculo
-    + dentroDosLimites(x: int, y: int) : boolean
-    + handleColisao(robo: Robo) : boolean
-}
-
-class TipoObstaculo {
-    - altura : int
-    - bloqueiaPassagem : boolean
-    - letal : boolean
-    - nivelUmidade : int
-    - descricao : String
-    + POCA : TipoObstaculo
-    + PEDRA : TipoObstaculo
-    + PREDIO : TipoObstaculo
-    + CACTO : TipoObstaculo
+interface Entidade {
+    + getX() : int
+    + getY() : int
+    + setX(int x) : void
+    + setY(int y) : void
+    + toString() : String
+    + update(Ambiente env) : void
+    + render() : char
+    + onCollision(Entidade other) : void
 }
 
 class MenuInterativo {
-    - ambienteAtual : Ambiente
+    + scanner : Scanner
+    + ambiente : Ambiente
+    + <init>() : MenuInterativo
+    + displayMenu() : void
+    + processInput(String input) : void
     + run() : void
-    + handleInput(input: String) : void
-    + showHelp() : void
-    + showRobos() : void
-    + showStatus() : void
-    + move(args: String[]) : void
-    + skill(args: String[]) : void
-    + monitorar(args: String[]) : void
 }
 
-' Sensores
-abstract class Sensor {
-    - alcance : int
+class ColisaoException {
+    + <init>() : ColisaoException
+    + <init>(String message) : ColisaoException
+    + <init>(Throwable cause) : ColisaoException
+}
+
+enum TipoObstaculo {
+    WALL,
+    PIT,
+    <init>(String name, char symbol)
+}
+
+class Obstaculo {
+    + x : int
+    + y : int
+    + type : TipoObstaculo
+    + <init>(int x, int y, TipoObstaculo type) : Obstaculo
+    + getX() : int
+    + getY() : int
+    + getType() : TipoObstaculo
+    + setX(int x) : void
+    + setY(int y) : void
+    + onCollision(Entidade other) : void
+    + toString() : String
+}
+
+enum EstadoRobo {
+    ON,
+    OFF,
+    <init>(String name)
+}
+
+class RoboDesligadoException {
+    + <init>() : RoboDesligadoException
+    + <init>(String message) : RoboDesligadoException
+    + <init>(Throwable cause) : RoboDesligadoException
+    + getMessage() : String
+    + toString() : String
+    + printStackTrace() : void
+}
+
+interface Explodidor {
+    + explode() : void
+    + <init>()
+}
+
+interface EnchedorDeSaco {
+    + fillBag() : void
+    + <init>()
+}
+
+interface Ladrao {
+    + steal() : void
+    + onDetect(Robo r) : void
+    + getLoot() : List<Object>
+}
+
+class RoboNotFoundException {
+    + <init>() : RoboNotFoundException
+    + <init>(String message) : RoboNotFoundException
+    + <init>(Throwable cause) : RoboNotFoundException
+    + getMessage() : String
+}
+
+class TaskNotFoundException {
+    + <init>() : TaskNotFoundException
+    + <init>(String message) : TaskNotFoundException
+}
+
+class Robo {
+    + id : String
+    + x : int
+    + y : int
+    + battery : int
+    + status : EstadoRobo
+    + tasks : List<String>
+    + <init>(String id) : Robo
+    + move(int dx, int dy) : void
+    + performTask(String task) : void
+    + recharge() : void
+    + shutdown() : void
+    + toString() : String
+}
+
+class RoboAereo {
+    + altitude : int
+    + maxAltitude : int
+    + <init>(String id) : RoboAereo
+    + ascend(int amount) : void
+    + descend(int amount) : void
+}
+
+class RoboTerrestre {
+    + wheels : int
+    + <init>(String id) : RoboTerrestre
+    + drive(int speed) : void
+}
+
+class RoboAleatorio {
+    + strategy : RandomStringGenerator
+    + <init>(String id) : RoboAleatorio
+    + chooseRandomMove() : void
+}
+
+class RoboAtirador {
+    + ammo : int
+    + range : int
+    + <init>(String id) : RoboAtirador
+    + shoot() : void
+    + reload() : void
+}
+
+class Sensor {
+    + range : double
+    + active : boolean
+    + <init>() : Sensor
+    + sense(Ambiente env) : void
 }
 
 class SensorProximidade {
-    + monitorar() : void
+    + <init>() : SensorProximidade
+    + sense(Ambiente env) : void
 }
 
 class SensorUmidade {
-    + monitorar()
+    + <init>() : SensorUmidade
+    + sense(Ambiente env) : void
 }
 
-' ======================== RELACIONAMENTOS ========================
+interface Sensoreavel {
+    + sense() : Object
+    + calibrate() : void
+}
 
-Main --> Ambiente
-Main --> RoboAleatorio
-Main --> RoboAtirador
-Main --> RoboTerrestre
-Main --> RoboAereo
-Main --> Robo
-Main --> MenuInterativo
-Main --> Obstaculo
+class NaoSensoriavelException {
+    + <init>() : NaoSensoriavelException
+    + <init>(String message) : NaoSensoriavelException
+    + <init>(Throwable cause) : NaoSensoriavelException
+}
 
-Ambiente "1" --> "*" Robo : contém
-Ambiente "1" --> "*" Obstaculo : contém
+class RandomNumberGenerator {
+    + seed : long
+    + <init>() : RandomNumberGenerator
+    + nextInt(int bound) : int
+    + nextDouble() : double
+}
 
-Obstaculo "1" --> "1" TipoObstaculo : possui
+class DistanceCalculator {
+    + <init>() : DistanceCalculator
+    + calculate(int x1, int y1, int x2, int y2) : double
+}
 
-Robo "1" *-- "*" Sensor : possui
+class RandomStringGenerator {
+    + length : int
+    + <init>() : RandomStringGenerator
+    + generate() : String
+}
 
-RoboAereo -|> Robo
-RoboAleatorio -|> RoboAereo
-RoboAtirador -|> RoboAereo
-RoboTerrestre -|> Robo
-
-SensorProximidade -|> Sensor
-SensorUmidade -|> Sensor
-
-MenuInterativo "1" --> Ambiente : interage com
-
-Sensor "1" --> "*" Obstaculo : detecta
-
+' Inheritance and implementation
+Entidade <|.. Obstaculo
+Entidade <|.. Robo
+Robo <|-- RoboAereo
+Robo <|-- RoboTerrestre
+RoboAereo <|-- RoboAleatorio
+RoboAereo <|-- RoboAtirador
+ForaMapaException <|-- Exception
+ErroComunicacaoException <|-- Exception
+ColisaoException <|-- Exception
+RoboDesligadoException <|-- Exception
+RoboNotFoundException <|-- Exception
+TaskNotFoundException <|-- Exception
+NaoSensoriavelException <|-- Exception
+Comunicavel <|.. RoboTerrestre
+Comunicavel <|.. RoboAtirador
+Explodidor <|.. RoboAleatorio
+EnchedorDeSaco <|.. RoboAtirador
+Ladrao <|.. Robo
+Sensoreavel <|.. Sensor
+Sensor <|-- SensorProximidade
+Sensor <|-- SensorUmidade
 @enduml
