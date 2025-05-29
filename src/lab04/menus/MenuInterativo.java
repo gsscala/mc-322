@@ -12,7 +12,6 @@ import robos.RoboDesligadoException;
 import robos.RoboNotFoundException;
 import robos.TaskNotFoundException;
 import ambiente.Ambiente;
-import comunicacao.CentralComunicacao;
 import comunicacao.Comunicavel;
 import comunicacao.ErroComunicacaoException;
 import entity.Entidade;
@@ -21,7 +20,6 @@ import sensores.*;
 public class MenuInterativo {
     private boolean terminated = false;
     private Ambiente ambienteAtual;
-    private CentralComunicacao centralComunicacao = new CentralComunicacao();
 
     public MenuInterativo(Ambiente ambiente) {
         this.ambienteAtual = ambiente;
@@ -54,14 +52,13 @@ public class MenuInterativo {
             return;
         }
 
+        // Regex para dividir a entrada em argumentos, considerando aspas para strings com espaços
         List<String> parsedArgs = new ArrayList<>();
         Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(input);
         while (m.find()) {
             if (m.group(1) != null) {
-                // Quoted part, without quotes
                 parsedArgs.add(m.group(1));
             } else {
-                // Unquoted word
                 parsedArgs.add(m.group(2));
             }
         }
@@ -77,16 +74,15 @@ public class MenuInterativo {
                 showHelp();
                 break;
 
-            case "showrobos":
-                showRobos();
-                break;
-
             case "move":
                 move(args);
                 break;
 
             case "executartarefa":
                 executarTarefa(args);
+                break;
+
+            case "tarefas":
                 break;
 
             case "status":
@@ -107,6 +103,10 @@ public class MenuInterativo {
             
             case "mudarestado":
                 mudarestado(args);
+                break;
+
+            case "listmensagens":
+                getAmbienteAtual().getCentralComunicacao().exibirMensagens();
                 break;
 
             default:
@@ -136,10 +136,10 @@ public class MenuInterativo {
         System.out.println("    - umidade");
     }
 
-    private void mudarestado(String [] args){
+    private void mudarestado(String[] args){
         Robo robo;
         try{
-            robo = findRobo(args[0]);
+            robo = findRobo(args[1]);
         }
         catch (RoboNotFoundException e){
             System.err.println(e.getMessage());
@@ -153,32 +153,35 @@ public class MenuInterativo {
         System.out.println(robo.setEstado(robo.getEstado() == EstadoRobo.DESLIGADO ? EstadoRobo.LIGADO : EstadoRobo.DESLIGADO));
     }
 
-    private void showRobos() {
-        for (Entidade e : ambienteAtual.getEntidades()) {
-            if (e instanceof Robo) {
-                Robo robo = (Robo) e;
-  
-                System.out.println(robo.getNome() + " (" + robo.getClass().getSimpleName() + ") - " + robo.getEstado().name());
-            }
-        }
-    }
 
     private void showStatus() {
+        // Mostra status do ambiente
+        System.out.printf("Ambiente: %s | Dimensões: %dx%dx%d | Umidade: %d%%%n",
+            ambienteAtual.getNome(),
+            ambienteAtual.getLargura(),
+            ambienteAtual.getProfundidade(),
+            ambienteAtual.getAltura(),
+            ambienteAtual.getUmidade()
+        );
+        System.out.println();
+
+        // Mostra status dos robôs
         System.out.println("Status dos robôs:");
         for (Entidade e : ambienteAtual.getEntidades()) {
             if (e instanceof Robo) {
                 Robo robo = (Robo) e;
-                
+
                 // Exibe o status do robô, incluindo nome, tipo, posição e bateria
-                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d%n - Estado: %s",
-                robo.getNome(),
-                robo.getClass().getSimpleName(),
-                robo.getPosicaoX(),
-                robo.getPosicaoY(),
-                robo.getAltitude(),
-                robo.getBateria(),
-                robo.getEstado() == EstadoRobo.LIGADO ? "ligado" : 
-                robo.getEstado() == EstadoRobo.DESLIGADO ? "desligado" : "morto");
+                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d - Estado: %s%n",
+                    robo.getNome(),
+                    robo.getClass().getSimpleName(),
+                    robo.getPosicaoX(),
+                    robo.getPosicaoY(),
+                    robo.getAltitude(),
+                    robo.getBateria(),
+                    robo.getEstado() == EstadoRobo.LIGADO ? "ligado" : 
+                    robo.getEstado() == EstadoRobo.DESLIGADO ? "desligado" : "morto"
+                );
             }
         }
     }
@@ -245,7 +248,6 @@ public class MenuInterativo {
         }
 
     }
-
 
     private void monitorar(String[] args) {
         if (args.length < 2) {
@@ -319,7 +321,6 @@ public class MenuInterativo {
         try {
             if (remetente instanceof Comunicavel && destinatario instanceof Comunicavel) {
                 ((Comunicavel) remetente).enviarMensagem((Comunicavel) destinatario, mensagem);
-                centralComunicacao.registrarMensagem(remetente.getNome(), destinatario.getNome(), mensagem);
                 System.out.println("Mensagem enviada de " + remetente.getNome() + " para " + destinatario.getNome());
             } else {
                 throw new ErroComunicacaoException("Robôs não são comunicaveis");

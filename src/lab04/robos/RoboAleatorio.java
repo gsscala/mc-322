@@ -2,8 +2,12 @@ package robos;
 // A classe RoboAleatorio herda da classe RoboAereo e representa um robô aéreo que se move e altera sua altitude aleatoriamente
 
 import utils.RandomNumberGenerator;
+
+import java.util.List;
+
 import comunicacao.ErroComunicacaoException;
 import utils.DistanceCalculator;
+import entity.Entidade;
 
 public class RoboAleatorio extends RoboAereo implements Explodidor{
 
@@ -38,10 +42,16 @@ public class RoboAleatorio extends RoboAereo implements Explodidor{
     }
 
     public void explodir(int radius) {
-        this.getAmbiente().getEntidades().removeIf(robo -> 
-            robo instanceof Robo && 
-            new DistanceCalculator(robo, this).calculateDistance() <= radius
-        );
+        List<Entidade> entidades = this.getAmbiente().getEntidades();
+
+        for (int i = entidades.size() - 1; i >= 0; i--) {
+            Entidade robo = entidades.get(i);
+
+            if (robo instanceof Robo && new DistanceCalculator(robo, this).calculateDistance() <= radius) {
+                System.out.println(((Robo) robo).getNome() + "morreu na explosão de " + this.getNome() + "!");
+                entidades.remove(i);
+            }
+        }
     }
 
     public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {

@@ -52,6 +52,7 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
         
         if (getEstado() == EstadoRobo.LIGADO) {
             // System.out.println(getNome() + " enviou a mensagem: " + mensagem + " para " + destinatario.getNome()); isso eh na CLI    
+            getAmbiente().getCentralComunicacao().registrarMensagem(this.getNome(), ((Robo) destinatario).getNome(), mensagem);
             try {
                 destinatario.receberMensagem(mensagem);  // Chama o método receberMensagem do destinatário
             } catch (RoboDesligadoException e) {
@@ -95,7 +96,6 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
         }
     }
 
-    // TODO: ARRUMAR SPLIT MENSAGEM
 
     private Robo findRobo(String nome) {
         for (Entidade e : this.getAmbiente().getEntidades()) {
@@ -111,11 +111,11 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
     }
 
     public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
-        switch (tarefa) {
+        switch (tarefa.toLowerCase()) {
             case "atirar":
                 atirar();
                 break;
-            case "encherOSaco":
+            case "encherosaco":
                 Robo robo = findRobo(args[0]);
                 if (!(robo instanceof Comunicavel))
                     throw new ErroComunicacaoException("Robô não comunicável");

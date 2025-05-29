@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import obstaculos.ColisaoException;
 import obstaculos.Obstaculo;
 import robos.*;
-
+import comunicacao.CentralComunicacao;
 import entity.*;
 
 // Declaração da classe Ambiente
@@ -25,6 +25,8 @@ public class Ambiente {
     private ArrayList<Entidade> entidades = new ArrayList<>();
 
     private TipoEntidade[][][] mapa; 
+
+    private CentralComunicacao centralComunicacao;
 
     
     // Construtor da classe Ambiente, que inicializa largura e altura com valores fornecidos
@@ -116,13 +118,13 @@ public class Ambiente {
         getMapa()[xf][yf][zf] = TipoEntidade.ROBO;  // Define a nova posição do robô no mapa
     }
 
+    public void adicionarCentralComunicacao(CentralComunicacao central) {
+        this.centralComunicacao = central; // Atribui a central de comunicação ao ambiente
+    }
 
-
-    // // Método que adiciona um objeto da classe Robo à lista de robôs e associa o ambiente ao robô
-    // public void adicionarRobo(Robo r) {
-    //     robos.add(r);           // Adiciona o robô à lista de robôs
-    //     r.setAmbiente(this);    // Chama o método addAmbiente no objeto Robo para associar o ambiente a ele
-    // }
+    public CentralComunicacao getCentralComunicacao() {
+        return this.centralComunicacao; // Retorna a central de comunicação associada ao ambiente
+    }
 
     public void adicionarEntidade(Entidade e) {
         entidades.add(e); 

@@ -1,4 +1,5 @@
 import ambiente.Ambiente;
+import comunicacao.CentralComunicacao;
 import obstaculos.Obstaculo;
 import obstaculos.TipoObstaculo;
 import robos.Robo;
@@ -16,6 +17,10 @@ public class Main {
     public static void main(String[] args) {
         // Criando o ambiente "ilhas_dog" com as dimensões 200x100 e capacidade para 200 robôs
         Ambiente ilhas_dog = new Ambiente(75, 75, 40, "ilhas dog", 5);
+
+        CentralComunicacao centralComunicacao = new CentralComunicacao();
+        ilhas_dog.adicionarCentralComunicacao(centralComunicacao); // Associando a central de comunicação ao ambiente
+
         // Criando diferentes tipos de robôs com seus respectivos parâmetros
         RoboAleatorio roboaleatorio = new RoboAleatorio("random", 0, 0, "Norte", 50);  
         RoboAtirador roboatirador = new RoboAtirador("praprapra", 17, 13, "Leste", 100, "Ak-47");
