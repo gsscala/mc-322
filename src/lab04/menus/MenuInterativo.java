@@ -122,24 +122,44 @@ public class MenuInterativo {
 
     private void showHelp() {
         System.out.println("Comandos disponíveis:");
-        System.out.println("- end                          : Finaliza a simulação");
-        System.out.println("- showRobos                    : Lista todos os robôs no ambiente");
-        System.out.println("- status                       : Mostra posição e status dos robôs");
-        System.out.println("- mudarestado <nome_robo>      : Desliga (se estiver ligado) ou liga (se estiver desligado) o robô");
-        System.out.println(
-                "- move <nome_robo> <x> <y>     : Move o robô especificado pelo deslocamento (deltaX, deltaY)");
-        System.out.println("- executartarefa <nome_robo> <ação> [...] : Executa uma habilidade especial de um robô");
-        System.out.println("  Ações especiais:");
-        System.out.println("    - RoboAtirador: atirar");
-        System.out.println("    - RoboTerrestre: turbo <deltaX> <deltaY> <velocidade>");
-        System.out.println("    - RoboAereo: subir <deltaZ> | descer <deltaZ>");
-        System.out.println("    - RoboAleatorio: aleatorio");
-        System.out.println(
-                "- monitorar <nome_robo>: Usa os sensores do robô para monitorar o ambiente");
-        System.out.println("  Tipos de sensores:");
-        System.out.println("    - proximidade");
-        System.out.println("    - umidade");
+        System.out.println("- end                             : Encerra a simulação imediatamente. Nenhum parâmetro adicional.");
+        System.out.println("- showRobos                       : Exibe lista de todos os robôs registrados no ambiente. Sem parâmetros.");
+        System.out.println("- status <nome_robo>              : Mostra posição (x,y,z), nível de bateria e estado (ligado/desligado/morto) do robô especificado.");
+        System.out.println("- move <nome_robo> <deltaX> <deltaY>       : Desloca o robô em deltaX (eixo X) e deltaY (eixo Y). Valores inteiros." );
+        System.out.println("- executarTarefa <nome_robo> <tarefa> [args] : Executa tarefa especial. 'tarefa' deve ser o nome exato (roubar, subir, explodir, etc.). 'args' são parâmetros da tarefa, quando aplicável (ex: deltaZ ou raio).");
+        System.out.println("- tarefas <nome_robo>             : Lista todas as tarefas que o tipo de robô suporta. Sem parâmetros.");
+        System.out.println("- monitorar <nome_robo>           : Aciona sensores de proximidade e umidade do robô, exibindo leituras atuais.");
+        System.out.println("- comunicar <nome1> <nome2> <msg> : Envia a string <msg> do robô <nome1> para o robô <nome2>. Mensagem entre aspas não é obrigatória.");
+        System.out.println("- showMapa                        : Desenha no console a representação textual do mapa e posição de todos os robôs.");
+        System.out.println("- mudarEstado <nome_robo>         : Alterna entre ligado e desligado. Se desligado, não aceita comandos até re-ligado.");
+        System.out.println("- listMensagens                   : Exibe todas as mensagens trocadas no ambiente desde o início da simulação.");
+        System.out.println("- help                            : Exibe esta mensagem de ajuda com sintaxes e descrições detalhadas.");
+    
+        System.out.println("%nDetalhamento de executarTarefa por classe de robô:");
+        
+        System.out.println("-- Robo (classe base):");
+        System.out.println("   - Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô alvo e R é a distância euclidiana entre os dois.");
+        
+        System.out.println("-- RoboAereo (subclasse de Robo):");
+        System.out.println("   - Roubar : mesma lógica de Robo");
+        System.out.println("   - Subir <deltaZ> : aumenta altitude até o máximo permitido pelo robô");
+        System.out.println("   - Descer <deltaZ> : diminui a altitude (não pode ficar abaixo de zero)");
+        
+        System.out.println("-- RoboTerrestre (subclasse de Robo):");
+        System.out.println("   - Roubar : mesma lógica de Robo");
+        
+        System.out.println("-- RoboAleatorio (subclasse de Robo):");
+        System.out.println("   - Roubar : mesma lógica de Robo");
+        System.out.println("   - Explodir <raio> : causa dano letal a todos os robôs dentro do raio especificado (inteiro)");
+        
+        System.out.println("-- RoboAtirador (subclasse de RoboAereo):");
+        System.out.println("   - Roubar : mesma lógica de Robo");
+        System.out.println("   - Subir <deltaZ> : herdado de RoboAereo");
+        System.out.println("   - Descer <deltaZ> : herdado de RoboAereo");
+        System.out.println("   - Atirar : elimina todos os robôs alinhados no mesmo X ou Y");
+        System.out.println("   - EncherOSaco <n> : envia n mensagens aleatórias para um robô-alvo, gerando spam");
     }
+    
 
     private void mudarestado(String[] args){
         Robo robo;
@@ -167,28 +187,29 @@ public class MenuInterativo {
             System.err.println(e.getMessage());
             return;
         }
+        System.out.printf("Funcionalidades do robô %s:%n", robo.getNome());
 
         if (robo.getClass() == Robo.class) {
-            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
         } 
         else if (robo.getClass() == RoboAereo.class) {
-            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
             System.out.println("- Subir : aumenta altitude do robô");
             System.out.println("- Descer : diminui a altitude do robô");
         } 
         else if (robo.getClass() == RoboAleatorio.class) {
-            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
             System.out.println("- Explodir : mata todos em os robôs em um raio R");
         } 
         else if (robo.getClass() == RoboAtirador.class) {
-            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
             System.out.println("- Subir : aumenta altitude do robô");
             System.out.println("- Descer : diminui a altitude do robô");
             System.out.println("- Atirar : mata todos os robôs com a mesma coordenada x o y do robô");
             System.out.println("- EncherOSaco : Manda um número de mensagens aleatórias (spam) para o robô escolhido");
         } 
         else if (robo.getClass() == RoboTerrestre.class) {
-            System.out.println("Funcionalidades:\n- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
+            System.out.println("- Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô roubado e R é a distância euclideana entre os dois.");
         } 
     }
 

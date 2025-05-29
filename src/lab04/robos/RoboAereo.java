@@ -1,84 +1,159 @@
+// Declaração do pacote ao qual esta classe pertence
 package robos;
-// A classe RoboAereo herda da classe Robo e adiciona funcionalidades específicas para robôs que podem voar
 
+// Importação de exceção necessária para comunicação
 import comunicacao.ErroComunicacaoException;
 
+/**
+ * Classe que representa um robô aéreo, especializado em operações em altitude.
+ * Estende a classe Robo para adicionar funcionalidades de voo.
+ */
 public class RoboAereo extends Robo {
-    // Declaração da variável privada altitude, que armazena a altura atual do robô aéreo
+    // Altitude atual do robô (em unidades do ambiente)
     private int altitude = 0;
     
-    // [0 -> alturaMax]     
+    // Altitude máxima permitida para este robô (0 até altitudeMaxima)
     private int altitudeMaxima;
 
-    // Construtor da classe RoboAereo, que inicializa o robô com nome, posição (X e Y), direção e altitude máxima
+    /**
+     * Construtor que inicializa o robô aéreo com parâmetros específicos.
+     * 
+     * @param nome Identificação do robô
+     * @param xIni Posição inicial no eixo X
+     * @param yIni Posição inicial no eixo Y
+     * @param direcao Direção inicial
+     * @param altitudeMaxima Altitude máxima permitida
+     */
     public RoboAereo(String nome, int xIni, int yIni, String direcao, int altitudeMaxima) {
-        super(nome, xIni, yIni, direcao);  // Chama o construtor da classe pai (Robo) para inicializar nome, posição e direção
-        setAltitudeMaxima(altitudeMaxima);  // Define a altitude máxima para o robô aéreo
+        // Chama o construtor da superclasse Robo
+        super(nome, xIni, yIni, direcao);
+        // Define a altitude máxima para o robô
+        setAltitudeMaxima(altitudeMaxima);
     }
 
-    @Override // main class
+    /**
+     * Sobrescrita do método da superclasse para retornar a altitude atual.
+     * @return Altitude atual do robô
+     */
+    @Override
     public int getAltitude() {
-        return altitude;  // Retorna a altitude atual do robô
+        return altitude;
     }
 
-    // Método setter para a altitude do robô aéreo
+    /**
+     * Define a altitude atual do robô.
+     * @param altitude Nova altitude
+     */
     public void setAltitude(int altitude) {
-        this.altitude = altitude;  // Define a altitude do robô
+        this.altitude = altitude;
     }
 
-    // Método getter para a altitude máxima do robô aéreo
+    /**
+     * Obtém a altitude máxima permitida para este robô.
+     * @return Altitude máxima
+     */
     public int getAltitudeMaxima() {
-        return altitudeMaxima;  // Retorna a altitude máxima do robô
+        return altitudeMaxima;
     }
 
-    // Método setter para a altitude máxima do robô aéreo
+    /**
+     * Define a altitude máxima permitida para este robô.
+     * @param altitudeMaxima Nova altitude máxima
+     */
     public void setAltitudeMaxima(int altitudeMaxima) {
-        this.altitudeMaxima = altitudeMaxima;  // Define a altitude máxima do robô
+        this.altitudeMaxima = altitudeMaxima;
     }
 
+    /**
+     * Aumenta a altitude do robô.
+     * @param deltaZ Quantidade a subir (deve ser positiva)
+     */
     public void subir(int deltaZ) {
+        // Valida se o valor é positivo
         if (deltaZ < 0) {
-            System.out.println("O número não pode ser negativo!");
+            System.out.println("O valor não pode ser negativo!");
             return;
         }
     
+        // Calcula nova altitude
         int novaAltitude = getAltitude() + deltaZ;
+        
+        // Verifica se excede a altitude máxima
         if (novaAltitude >= getAltitudeMaxima()) {
-            novaAltitude = getAltitudeMaxima()-1;
+            novaAltitude = getAltitudeMaxima() - 1;  // Ajusta para o máximo permitido
             System.out.println("Altitude máxima atingida!");
-        } 
-        getAmbiente().moverRoboMapa(getPosicaoX(), getPosicaoY(), getAltitude(), getPosicaoX(), getPosicaoY(), novaAltitude); // Vem antes do set
+        }
+        
+        // Atualiza o mapa do ambiente ANTES de alterar a altitude
+        getAmbiente().moverRoboMapa(
+            getPosicaoX(), getPosicaoY(), getAltitude(), 
+            getPosicaoX(), getPosicaoY(), novaAltitude
+        );
+        
+        // Atualiza a altitude do robô
         setAltitude(novaAltitude);
     }
     
+    /**
+     * Diminui a altitude do robô.
+     * @param deltaZ Quantidade a descer (deve ser positiva)
+     */
     public void descer(int deltaZ) {
+        // Valida se o valor é positivo
         if (deltaZ < 0) {
-            System.out.println("O número não pode ser negativo!");
+            System.out.println("O valor não pode ser negativo!");
             return;
         }
     
+        // Calcula nova altitude
         int novaAltitude = getAltitude() - deltaZ;
+        
+        // Verifica se está abaixo do mínimo permitido
         if (novaAltitude < 0) {
-            setAltitude(0);
+            novaAltitude = 0;  // Define altitude mínima
             System.out.println("Altitude mínima atingida!");
-        } else {
-            setAltitude(novaAltitude);
         }
+        
+        // Atualiza a altitude do robô
+        setAltitude(novaAltitude);
     }
 
-    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
+    /**
+     * Executa tarefas específicas para robôs aéreos.
+     * Adiciona comandos de subir e descer além das tarefas básicas.
+     * 
+     * @param tarefa Nome da tarefa a executar
+     * @param args Argumentos adicionais para a tarefa
+     * @throws RoboDesligadoException Se robô estiver desligado
+     * @throws ErroComunicacaoException Em falhas de comunicação
+     * @throws TaskNotFoundException Se tarefa não for reconhecida
+     */
+    @Override
+    public void executarTarefa(String tarefa, String[] args) 
+        throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
+        
+        // Verifica estado antes de executar
+        if (getEstado() != EstadoRobo.LIGADO) {
+            throw new RoboDesligadoException("Robô desligado não pode executar tarefas");
+        }
+        
+        // Seleciona tarefa baseada no comando
         switch (tarefa) {
             case "subir":
+                // Converte primeiro argumento para inteiro e executa subida
                 subir(Integer.parseInt(args[0]));
                 break;
             case "descer":
+                // Converte primeiro argumento para inteiro e executa descida
                 descer(Integer.parseInt(args[0]));
                 break;
             case "roubar":
+                // Executa roubo de bateria (herdado da superclasse)
                 roubar();
                 break;
             default:
-                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);  // Lança exceção se a tarefa não for reconhecida
+                // Lança exceção para tarefas não implementadas
+                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
         }
     }
 }

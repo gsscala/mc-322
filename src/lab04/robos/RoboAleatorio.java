@@ -1,70 +1,126 @@
+// Declaração do pacote ao qual esta classe pertence
 package robos;
-// A classe RoboAleatorio herda da classe RoboAereo e representa um robô aéreo que se move e altera sua altitude aleatoriamente
 
-import utils.RandomNumberGenerator;
+// Importações necessárias para a classe
+import utils.RandomNumberGenerator;  // Utilitário para geração de números aleatórios
+import java.util.List;               // Interface para listas dinâmicas
+import comunicacao.ErroComunicacaoException;  // Exceção de comunicação
+import utils.DistanceCalculator;     // Utilitário para cálculo de distância
+import entity.Entidade;              // Interface base para entidades
 
-import java.util.List;
+/**
+ * Classe que representa um robô aéreo com movimentos e ações aleatórias.
+ * Estende RoboAereo e implementa a capacidade de explosão (Explodidor).
+ */
+public class RoboAleatorio extends RoboAereo implements Explodidor {
 
-import comunicacao.ErroComunicacaoException;
-import utils.DistanceCalculator;
-import entity.Entidade;
-
-public class RoboAleatorio extends RoboAereo implements Explodidor{
-
-    // Construtor da classe RoboAleatorio, que inicializa o robô com nome, posição (X e Y), direção e altitude máxima
+    /**
+     * Construtor que inicializa o robô aleatório.
+     * 
+     * @param nome Identificação do robô
+     * @param xIni Posição inicial X
+     * @param yIni Posição inicial Y
+     * @param direcao Direção inicial
+     * @param altitudeMaxima Limite máximo de altitude
+     */
     public RoboAleatorio(String nome, int xIni, int yIni, String direcao, int altitudeMaxima) {
-        super(nome, xIni, yIni, direcao, altitudeMaxima);  // Chama o construtor da classe pai (RoboAereo) para inicializar nome, posição, direção e altitude máxima
+        // Chama o construtor da superclasse RoboAereo
+        super(nome, xIni, yIni, direcao, altitudeMaxima);
     }
 
+    /**
+     * Move o robô para uma posição aleatória válida no ambiente 3D.
+     * Gera novas coordenadas até encontrar uma posição sem obstáculos.
+     */
     public void mover() {
+        // Obtém dimensões do ambiente
         int largura = getAmbiente().getLargura();
         int profundidade = getAmbiente().getProfundidade();
     
+        // Cria geradores de números aleatórios para cada eixo
         RandomNumberGenerator RNGx = new RandomNumberGenerator(0, largura - 1);
         RandomNumberGenerator RNGy = new RandomNumberGenerator(0, profundidade - 1);
         RandomNumberGenerator RNGz = new RandomNumberGenerator(0, getAltitudeMaxima() - 1);
     
+        // Variáveis para nova posição
         int nx, ny, nz;
-    
-        do {
-            nx = RNGx.generate();
-            ny = RNGy.generate();
-            nz = RNGz.generate();
-        } while (getAmbiente().hasObstacle(nx, ny, nz)); // Continua tentando enquanto houver colisão
 
-        getAmbiente().moverRoboMapa(getPosicaoX(), getPosicaoY(), getAltitude(), nx, ny, nz); // Mover no mapa para a nova posição
+        // Loop até encontrar posição livre
+        do {
+            nx = RNGx.generate();  // Gera X aleatório
+            ny = RNGy.generate();  // Gera Y aleatório
+            nz = RNGz.generate();  // Gera Z aleatório
+        } while (getAmbiente().hasObstacle(nx, ny, nz)); // Verifica colisões
+
+        // Atualiza o mapa do ambiente com a nova posição
+        getAmbiente().moverRoboMapa(getPosicaoX(), getPosicaoY(), getAltitude(), nx, ny, nz);
         
+        // Atualiza estado interno do robô
         setPosicaoX(nx);
         setPosicaoY(ny);
         setAltitude(nz);
 
-        System.out.println(getNome() + " teleportou para (" + getPosicaoX() + ", " + getPosicaoY() + ", " + getAltitude() + ")");
+        // Log do movimento
+        System.out.println(getNome() + " teleportou para (" + nx + ", " + ny + ", " + nz + ")");
     }
 
+    /**
+     * Implementação da interface Explodidor.
+     * Destrói todos os robôs dentro do raio especificado.
+     * 
+     * @param radius Raio de efeito da explosão
+     */
+    @Override
     public void explodir(int radius) {
+        // Obtém todas as entidades do ambiente
         List<Entidade> entidades = this.getAmbiente().getEntidades();
 
+        // Itera de trás para frente para evitar problemas ao remover itens
         for (int i = entidades.size() - 1; i >= 0; i--) {
-            Entidade robo = entidades.get(i);
+            Entidade entidade = entidades.get(i);
 
-            if (robo instanceof Robo && new DistanceCalculator(robo, this).calculateDistance() <= radius) {
-                System.out.println(((Robo) robo).getNome() + "morreu na explosão de " + this.getNome() + "!");
-                entidades.remove(i);
+            // Verifica se é um robô diferente deste e dentro do raio
+            if (entidade instanceof Robo && entidade != this) {
+                Robo outroRobo = (Robo) entidade;
+                double distancia = new DistanceCalculator(entidade, this).calculateDistance();
+                
+                if (distancia <= radius) {
+                    // Remove robô afetado
+                    System.out.println(outroRobo.getNome() + " morreu na explosão de " + this.getNome() + "!");
+                    entidades.remove(i);
+                }
             }
         }
     }
 
-    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
+    /**
+     * Executa tarefas específicas para robôs aleatórios.
+     * Adiciona suporte ao comando "explodir" além das tarefas herdadas.
+     * 
+     * @param tarefa Nome da tarefa a executar
+     * @param args Argumentos adicionais
+     */
+    @Override
+    public void executarTarefa(String tarefa, String[] args) 
+        throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
+        
+        // Verifica estado antes de executar
+        if (getEstado() != EstadoRobo.LIGADO) {
+            throw new RoboDesligadoException("Robô desligado não pode executar tarefas");
+        }
+        
+        // Seleciona tarefa baseada no comando
         switch (tarefa) {
             case "roubar":
-                roubar();
+                roubar();  // Tarefa herdada
                 break;
             case "explodir":
+                // Converte argumento para inteiro e executa explosão
                 explodir(Integer.parseInt(args[0]));
                 break;
             default:
-                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);  // Lança exceção se a tarefa não for reconhecida
+                // Tarefa não reconhecida
+                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
         }
     }
-    
 }
