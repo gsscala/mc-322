@@ -8,12 +8,8 @@ import java.util.regex.*;
 
 import robos.EstadoRobo;
 import robos.Robo;
-import robos.RoboAleatorio;
-import robos.RoboAereo;
-import robos.RoboAtirador;
 import robos.RoboDesligadoException;
 import robos.RoboNotFoundException;
-import robos.RoboTerrestre;
 import robos.TaskNotFoundException;
 import ambiente.Ambiente;
 import comunicacao.CentralComunicacao;
