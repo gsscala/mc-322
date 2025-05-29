@@ -88,13 +88,13 @@ public class RoboTerrestre extends Robo implements Comunicavel {
         }   
     }
 
-    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
         switch (tarefa) {
             case "roubar":
                 roubar();
                 break;
             default:
-                break;
+                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);  // Lança exceção se a tarefa não for reconhecida
         }
     }
 

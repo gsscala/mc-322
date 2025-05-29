@@ -1,6 +1,10 @@
 package menus;
 
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.*;
 
 import robos.EstadoRobo;
 import robos.Robo;
@@ -10,6 +14,7 @@ import robos.RoboAtirador;
 import robos.RoboDesligadoException;
 import robos.RoboNotFoundException;
 import robos.RoboTerrestre;
+import robos.TaskNotFoundException;
 import ambiente.Ambiente;
 import comunicacao.CentralComunicacao;
 import comunicacao.Comunicavel;
@@ -53,7 +58,19 @@ public class MenuInterativo {
             return;
         }
 
-        String[] args = input.split("\\s+");
+        List<String> parsedArgs = new ArrayList<>();
+        Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(input);
+        while (m.find()) {
+            if (m.group(1) != null) {
+                // Quoted part, without quotes
+                parsedArgs.add(m.group(1));
+            } else {
+                // Unquoted word
+                parsedArgs.add(m.group(2));
+            }
+        }
+
+        String[] args = parsedArgs.toArray(new String[0]);
 
         switch (args[0].toLowerCase()) {
             case "end":
@@ -73,7 +90,7 @@ public class MenuInterativo {
                 break;
 
             case "executartarefa":
-                skill(args);
+                executarTarefa(args);
                 break;
 
             case "status":
@@ -191,55 +208,43 @@ public class MenuInterativo {
         }
     }
 
-    private void skill(String[] args) {
+    private void executarTarefa(String[] args) {
         if (args.length < 3) {
             System.out.println("Uso: special <nome_robo> <ação> [argumentos]");
             return;
         }
-        // Encontra o robô pelo nome
-        Robo robo = findRobo(args[1]);
-        if (robo == null) {
-            System.out.println("Robô não encontrado: " + args[1]);
+
+        Robo robo = null;
+        try {
+            robo = findRobo(args[1]);
+        } catch (RoboNotFoundException e) {
+            System.out.println(e.getMessage());
             return;
         }
 
-        // Ação a ser realizada
         String comando = args[2];
 
-        // Verifica se o robô é do tipo RoboAtirador e executa o comando de atirar
-        if (robo instanceof RoboAtirador && comando.equalsIgnoreCase("atirar")) {
-            ((RoboAtirador) robo).atirar();
+        String[] args_tarefa = new String[0];
+        if (args.length > 3) {
+            // Copia os argumentos restantes para args_tarefa
+            args_tarefa = Arrays.copyOfRange(args, 3, args.length);
         }
-        // Verifica se o robô é do tipo RoboTerrestre e executa o comando de turbo
-        else if (robo instanceof RoboTerrestre && comando.equalsIgnoreCase("turbo")) {
-            if (args.length < 6) {
-                System.out.println("Uso: special " + robo.getNome() + " turbo <deltaX> <deltaY> <velocidade>");
-                return;
-            }
-            int deltaX = Integer.parseInt(args[3]);
-            int deltaY = Integer.parseInt(args[4]);
-            int velocidade = Integer.parseInt(args[5]);
-            ((RoboTerrestre) robo).mover(deltaX, deltaY, velocidade);
+
+        try {
+            robo.executarTarefa(comando, args_tarefa);
+        } catch (RoboDesligadoException e) {
+            System.out.println(e.getMessage());
+            return;
+        } catch (ErroComunicacaoException e) {
+            System.out.println(e.getMessage());
+            return;
+        } catch (TaskNotFoundException e) {
+            System.out.println(e.getMessage());
+            return;
         }
-        // Verifica se o robô é do tipo RoboAereo (ou RoboAleatorio, pois herda de
-        // RoboAereo) e executa os comandos de subir/descer
-        else if (robo instanceof RoboAereo && comando.equalsIgnoreCase("subir")) {
-            int deltaZ = Integer.parseInt(args[3]);
-            ((RoboAereo) robo).subir(deltaZ);
-        } else if (robo instanceof RoboAereo && comando.equalsIgnoreCase("descer")) {
-            int deltaZ = Integer.parseInt(args[3]);
-            ((RoboAereo) robo).descer(deltaZ);
-        }
-        // Verifica se o robô é do tipo RoboAleatorio (herda de RoboAereo e
-        // RoboAtirador) e executa o comando aleatório
-        else if (robo instanceof RoboAleatorio && comando.equalsIgnoreCase("aleatorio")) {
-            ((RoboAleatorio) robo).mover();
-        }
-        // Caso o comando não corresponda a nenhuma ação válida
-        else {
-            System.out.println("Este robô não possui habilidade especial ou comando inválido.");
-        }
+
     }
+
 
     private void monitorar(String[] args) {
         if (args.length < 2) {

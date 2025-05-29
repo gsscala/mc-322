@@ -66,7 +66,7 @@ public class RoboAereo extends Robo {
         }
     }
 
-    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException{
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
         switch (tarefa) {
             case "subir":
                 subir(Integer.parseInt(args[0]));
@@ -78,7 +78,7 @@ public class RoboAereo extends Robo {
                 roubar();
                 break;
             default:
-                break;
+                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);  // Lança exceção se a tarefa não for reconhecida
         }
     }
 }

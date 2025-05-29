@@ -110,7 +110,7 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
         return null;
     }
 
-    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
         switch (tarefa) {
             case "atirar":
                 atirar();
@@ -131,7 +131,7 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
                 descer(Integer.parseInt(args[0]));
                 break;
             default:
-                break;
+                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);  // Lança exceção se a tarefa não for reconhecida
         }
     }
 }

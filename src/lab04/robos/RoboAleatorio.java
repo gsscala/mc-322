@@ -44,7 +44,7 @@ public class RoboAleatorio extends RoboAereo implements Explodidor{
         );
     }
 
-    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
         switch (tarefa) {
             case "roubar":
                 roubar();
@@ -53,7 +53,7 @@ public class RoboAleatorio extends RoboAereo implements Explodidor{
                 explodir(Integer.parseInt(args[0]));
                 break;
             default:
-                break;
+                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);  // Lança exceção se a tarefa não for reconhecida
         }
     }
     

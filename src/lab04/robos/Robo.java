@@ -236,16 +236,17 @@ public class Robo implements Entidade, Ladrao {
                 int db = (int) (robo.getBateria() / distance);
                 robo.setBateria(robo.getBateria() - db);
                 this.setBateria(this.getBateria() + db);
+                System.out.println(String.format("Roubou %d de bateria do robô %s, agora tem %d de bateria.", db, robo.getNome(), this.getBateria()));
             }
     }
 
-    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException {
+    public void executarTarefa(String tarefa, String[] args) throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
         switch (tarefa) {
             case "roubar":
                 roubar();
                 break;
             default:
-                break;
+                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);  // Lança exceção se a tarefa não for reconhecida
         }
     }
 }
