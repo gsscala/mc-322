@@ -140,13 +140,15 @@ public class MenuInterativo {
         System.out.println("    - umidade");
     }
 
-    private void mudarestado(String [] args) throws RoboNotFoundException{
-        Robo robo = findRobo(args[0]);
-        try:
-            if (robo == null){
-                throw new RoboNotFoundException("Robo não encontrado");
-            }
-        catch
+    private void mudarestado(String [] args){
+        Robo robo;
+        try{
+            robo = findRobo(args[0]);
+        }
+        catch (RoboNotFoundException e){
+            System.err.println(e.getMessage());
+            return;
+        }
         if (robo.getEstado() == EstadoRobo.MORTO){
             System.out.printf("Robô %s está morto, isto é inalterável!", robo.getNome());
             return;
@@ -191,9 +193,12 @@ public class MenuInterativo {
             return;
         }
 
-        Robo robo = findRobo(args[1]);
-        if (robo == null) {
-            System.out.println("Robô não encontrado: " + args[1]);
+        Robo robo;
+
+        try{
+            robo = findRobo(args[1]);
+        }catch (RoboNotFoundException e){
+            System.err.println(e.getMessage());
             return;
         }
 
@@ -252,22 +257,24 @@ public class MenuInterativo {
             return;
         }
 
-        Robo robo = findRobo(args[1]);
-        if (robo == null) {
-            System.out.println("Robô não encontrado: " + args[1]);
+        Robo robo;
+        try{
+            robo = findRobo(args[1]);}
+        catch (RoboNotFoundException e){
+            System.err.println(e.getMessage());
             return;
         }
 
-        try { 
-            if (robo instanceof Sensoreavel) {
-                ((Sensoreavel)robo).acionarSensores();
-            }
-            else {
-                System.out.println("Robô não é sensoreavel");
-            }
+        try {
+            if (!(robo instanceof Sensoreavel))
+                throw new NaoSensoriavelException("Robô não sensoriável");
+            ((Sensoreavel)robo).acionarSensores();
         } 
         catch (RoboDesligadoException e) {
             System.err.println(e.getMessage()); 
+        }
+        catch (NaoSensoriavelException e){
+            System.err.println(e.getMessage());
         }
     }
         
@@ -294,24 +301,30 @@ public class MenuInterativo {
 
         Robo remetente;
 
-        try:
+        try{
             remetente = findRobo(args[1]);
-        catch 
-        // try catch solução mais funcional 
+        }
+        catch (RoboNotFoundException e){
+            System.err.println(e.getMessage());
+            return;
+        }
 
-        Robo destinario = findRobo(args[2]);
-        if (destinario == null) {
-            System.out.println("Robô destinatário não encontrado: " + args[2]);
+        Robo destinatario;
+
+        try{
+            destinatario = findRobo(args[2]);
+        }catch (RoboNotFoundException e){
+            System.err.println(e.getMessage());
             return;
         }
 
         String mensagem = args[3];
 
         try {
-            if (remetente instanceof Comunicavel && destinario instanceof Comunicavel) {
-                ((Comunicavel) remetente).enviarMensagem((Comunicavel) destinario, mensagem);
-                centralComunicacao.registrarMensagem(remetente.getNome(), destinario.getNome(), mensagem);
-                System.out.println("Mensagem enviada de " + remetente.getNome() + " para " + destinario.getNome());
+            if (remetente instanceof Comunicavel && destinatario instanceof Comunicavel) {
+                ((Comunicavel) remetente).enviarMensagem((Comunicavel) destinatario, mensagem);
+                centralComunicacao.registrarMensagem(remetente.getNome(), destinatario.getNome(), mensagem);
+                System.out.println("Mensagem enviada de " + remetente.getNome() + " para " + destinatario.getNome());
             } else {
                 throw new ErroComunicacaoException("Robôs não são comunicaveis");
             }
