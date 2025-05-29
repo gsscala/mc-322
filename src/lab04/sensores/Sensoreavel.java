@@ -3,5 +3,5 @@ package sensores;
 import robos.RoboDesligadoException;
 
 public interface Sensoreavel {
-    void acionarSensores() throws RoboDesligadoException;
+    void acionarSensores() throws RoboDesligadoException, NaoSensoriavelException;
 }
