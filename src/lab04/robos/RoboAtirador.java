@@ -197,34 +197,38 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
         throws RoboDesligadoException, ErroComunicacaoException, TaskNotFoundException {
         
         // Converte o nome da tarefa para minúsculas para comparação insensível a maiúsculas
-        switch (tarefa.toLowerCase()) {
-            case "atirar":
-                atirar();  // Executa disparo
-                break;
-            case "encherosaco":
-                // Encontra o robô alvo pelo nome
-                Robo robo = findRobo(args[0]);
-                if (robo == null) {
-                    throw new ErroComunicacaoException("Robô não encontrado: " + args[0]);
-                }
-                if (!(robo instanceof Comunicavel)) {
-                    throw new ErroComunicacaoException("Robô não comunicável: " + args[0]);
-                }
-                // Executa envio de spam
-                encherOSaco((Comunicavel) robo, Integer.parseInt(args[1]));
-                break;
-            case "roubar":
-                roubar();  // Tarefa herdada
-                break;
-            case "subir":
-                subir(Integer.parseInt(args[0]));  // Tarefa herdada
-                break;
-            case "descer":
-                descer(Integer.parseInt(args[0]));  // Tarefa herdada
-                break;
-            default:
-                // Tarefa não reconhecida
-                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
+        try{
+            switch (tarefa.toLowerCase()) {
+                case "atirar":
+                    atirar();  // Executa disparo
+                    break;
+                case "encherosaco":
+                    // Encontra o robô alvo pelo nome
+                    Robo robo = findRobo(args[0]);
+                    if (robo == null) {
+                        throw new ErroComunicacaoException("Robô não encontrado: " + args[0]);
+                    }
+                    if (!(robo instanceof Comunicavel)) {
+                        throw new ErroComunicacaoException("Robô não comunicável: " + args[0]);
+                    }
+                    // Executa envio de spam
+                    encherOSaco((Comunicavel) robo, Integer.parseInt(args[1]));
+                    break;
+                case "roubar":
+                    roubar();  // Tarefa herdada
+                    break;
+                case "subir":
+                    subir(Integer.parseInt(args[0]));  // Tarefa herdada
+                    break;
+                case "descer":
+                    descer(Integer.parseInt(args[0]));  // Tarefa herdada
+                    break;
+                default:
+                    // Tarefa não reconhecida
+                    throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
+            }
+        } catch (ArrayIndexOutOfBoundsException e){
+            System.err.println("Número de argumentos insuficiente. Execute help para descobrir como rodar o comando corretamente!");
         }
     }
 }

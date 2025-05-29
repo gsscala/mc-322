@@ -138,22 +138,26 @@ public class RoboAereo extends Robo {
         }
         
         // Seleciona tarefa baseada no comando
-        switch (tarefa) {
-            case "subir":
-                // Converte primeiro argumento para inteiro e executa subida
-                subir(Integer.parseInt(args[0]));
-                break;
-            case "descer":
-                // Converte primeiro argumento para inteiro e executa descida
-                descer(Integer.parseInt(args[0]));
-                break;
-            case "roubar":
-                // Executa roubo de bateria (herdado da superclasse)
-                roubar();
-                break;
-            default:
-                // Lança exceção para tarefas não implementadas
-                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
+        try{
+            switch (tarefa) {
+                case "subir":
+                    // Converte primeiro argumento para inteiro e executa subida
+                    subir(Integer.parseInt(args[0]));
+                    break;
+                case "descer":
+                    // Converte primeiro argumento para inteiro e executa descida
+                    descer(Integer.parseInt(args[0]));
+                    break;
+                case "roubar":
+                    // Executa roubo de bateria (herdado da superclasse)
+                    roubar();
+                    break;
+                default:
+                    // Lança exceção para tarefas não implementadas
+                    throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.err.println("Número de argumentos insuficiente. Execute help para descobrir como rodar o comando corretamente!");
         }
     }
 }

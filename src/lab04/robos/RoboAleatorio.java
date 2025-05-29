@@ -110,17 +110,21 @@ public class RoboAleatorio extends RoboAereo implements Explodidor {
         }
         
         // Seleciona tarefa baseada no comando
-        switch (tarefa) {
-            case "roubar":
-                roubar();  // Tarefa herdada
-                break;
-            case "explodir":
-                // Converte argumento para inteiro e executa explosão
-                explodir(Integer.parseInt(args[0]));
-                break;
-            default:
-                // Tarefa não reconhecida
-                throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
+        try{
+            switch (tarefa) {
+                case "roubar":
+                    roubar();  // Tarefa herdada
+                    break;
+                case "explodir":
+                    // Converte argumento para inteiro e executa explosão
+                    explodir(Integer.parseInt(args[0]));
+                    break;
+                default:
+                    // Tarefa não reconhecida
+                    throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.err.println("Número de argumentos insuficiente. Execute help para descobrir como rodar o comando corretamente!");
         }
     }
 }
