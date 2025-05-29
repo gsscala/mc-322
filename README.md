@@ -70,7 +70,7 @@ src/lab04
 ### Compilação e Execução
 1. **Compilar o projeto:**
    ```bash
-   javac -d bin src/*.java src/ambiente/*.java src/comunicacao/*.java src/entity/*.java src/menus/*.java src/obstaculos/*.java src/robos/*.java src/sensores/*.java src/utils/*.java
+   javac -d bin src/lab04/*.java src/lab04/ambiente/*.java src/lab04/comunicacao/*.java src/lab04/entity/*.java src/lab04/menus/*.java src/lab04/obstaculos/*.java src/lab04/robos/*.java src/lab04/sensores/*.java src/lab04/utils/*.java
    ```
 2. **Executar a simulação:**
    ```bash
