@@ -22,7 +22,7 @@ public class Robo implements Entidade, Ladrao {
     private int posicaoY;         // Posição atual no eixo Y (vertical)
     private String direcao;       // Direção atual do robô (Norte, Sul, Leste, Oeste)
     private EstadoRobo estado = EstadoRobo.LIGADO;  // Estado operacional (inicia ligado)
-    private String descricao = "Robô genérico";  // Descrição básica do robô
+    private String descricao;  // Descrição básica do robô
     private TipoEntidade tipo = TipoEntidade.ROBO;  // Tipo fixo de entidade
     private char representacao = '0';  // Caractere de representação visual
     private int bateria = 2000;   // Nível de bateria inicial
@@ -42,6 +42,7 @@ public class Robo implements Entidade, Ladrao {
         setPosicaoX(xIni);       // Define posição X inicial
         setPosicaoY(yIni);       // Define posição Y inicial
         setDirecao(direcao);     // Define direção inicial
+        setDescricao("Um robô é um dispositivo programável, autônomo ou semiautônomo, projetado para executar tarefas específicas e interagir com seu ambiente.");
     }
 
     /**
@@ -158,6 +159,10 @@ public class Robo implements Entidade, Ladrao {
 
     public void setPosicaoY(int posicaoY) {
         this.posicaoY = posicaoY;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;  
     }
 
     @Override

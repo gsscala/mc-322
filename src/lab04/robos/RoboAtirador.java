@@ -33,6 +33,7 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
         super(nome, xIni, yIni, direcao, altitudeMaxima);
         // Define a arma do robô
         setArma(arma);
+        setDescricao("Um robô atirador possui a capacidade de disparar projéteis ou operar armamentos, sendo utilizado em aplicações que demandam lançamento à distância.");
     }
 
     /**

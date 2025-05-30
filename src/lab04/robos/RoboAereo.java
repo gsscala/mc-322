@@ -29,6 +29,7 @@ public class RoboAereo extends Robo {
         super(nome, xIni, yIni, direcao);
         // Define a altitude máxima para o robô
         setAltitudeMaxima(altitudeMaxima);
+        setDescricao("Um robô aéreo é um veículo aéreo não tripulado, operado remotamente ou de forma autônoma, empregado para tarefas com ambiente.");
     }
 
     /**

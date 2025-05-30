@@ -36,6 +36,8 @@ public class RoboTerrestre extends Robo implements Comunicavel {
             // Usa o valor fornecido
             setVelocidadeMaxima(velocidadeMaxima);
         }
+
+        setDescricao("Um robô terrestre opera e se desloca sobre a superfície do solo e pode superar obstaculos no seu caminho.");
     }
 
     /**

@@ -26,6 +26,7 @@ public class RoboAleatorio extends RoboAereo implements Explodidor {
     public RoboAleatorio(String nome, int xIni, int yIni, String direcao, int altitudeMaxima) {
         // Chama o construtor da superclasse RoboAereo
         super(nome, xIni, yIni, direcao, altitudeMaxima);
+        setDescricao("Um robô aleatório incorpora elementos de imprevisibilidade em sua lógica de decisão ou padrões de movimento, útil para exploração ou simulações.");
     }
 
     /**
