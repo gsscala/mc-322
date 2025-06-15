@@ -6,6 +6,7 @@ import comunicacao.Comunicavel;          // Interface para comunicação
 import comunicacao.ErroComunicacaoException;  // Exceção de comunicação
 import entity.Entidade;                  // Interface base para entidades
 import sensores.Sensor;                  // Interface para sensores
+import sensores.Sensoreavel;
 import utils.RandomNumberGenerator;      // Utilitário para geração de números aleatórios
 import utils.RandomStringGenerator;      // Utilitário para geração de strings aleatórias
 
@@ -13,10 +14,11 @@ import utils.RandomStringGenerator;      // Utilitário para geração de string
  * Classe que representa um robô aéreo armado com capacidade de atirar, comunicar-se e enviar spam.
  * Estende RoboAereo e implementa as interfaces Comunicavel e EnchedorDeSaco.
  */
-public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSaco {
+public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSaco, Sensoreavel {
     
     // Nome da arma que o robô possui (valor padrão: "Ak-47")
     private String arma = "Ak-47";
+    private ArrayList<Sensor>sensores;
 
     /**
      * Construtor que inicializa o robô atirador.
@@ -34,6 +36,13 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
         // Define a arma do robô
         setArma(arma);
         setDescricao("Um robô atirador possui a capacidade de disparar projéteis ou operar armamentos, sendo utilizado em aplicações que demandam lançamento à distância.");
+    
+        setSensores(SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
+    }
+
+
+    public Arraylist<Sensor> getSensores (){
+        return sensores;
     }
 
     /**
@@ -51,7 +60,7 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
     public String getArma() {
         return this.arma;
     }
-
+    
     /**
      * Simula o ato de atirar, eliminando robôs inimigos na linha de tiro.
      * A direção do tiro depende da orientação atual do robô.

@@ -1,18 +1,27 @@
 // Declaração do pacote ao qual esta classe pertence
 package robos;
 
+import java.util.ArrayList;
+
 // Importações necessárias para interfaces e exceções
 import comunicacao.Comunicavel;
 import comunicacao.ErroComunicacaoException;
+import sensores.Sensor;
+import sensores.SensorProximidade;
+import sensores.SensorUmidade;
+import sensores.Sensoreavel;
+import utils.RandomNumberGenerator;
 
 /**
  * Classe que representa um robô terrestre especializado.
  * Estende a classe Robo básica e implementa capacidade de comunicação.
  */
-public class RoboTerrestre extends Robo implements Comunicavel {
+public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
     // Velocidade máxima do robô (em unidades do ambiente por movimento)
     private int velocidadeMaxima;
+    private ArrayList<Sensor>sensores;
 
+    
     /**
      * Construtor que inicializa o robô terrestre com parâmetros específicos.
      * 
@@ -37,7 +46,20 @@ public class RoboTerrestre extends Robo implements Comunicavel {
             setVelocidadeMaxima(velocidadeMaxima);
         }
 
+        setSensores(SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
+
+        setSensores(SensorUmidade(new RandomNumberGenerator(1, 8).generate()));
+
         setDescricao("Um robô terrestre opera e se desloca sobre a superfície do solo e pode superar obstaculos no seu caminho.");
+    }
+
+    
+    public Arraylist<Sensor> getSensores (){
+        return sensores;
+    }
+
+    public setSensores(Sensor sensor){
+        sensores.add(sensor);
     }
 
     /**
@@ -54,6 +76,23 @@ public class RoboTerrestre extends Robo implements Comunicavel {
      */
     public void setVelocidadeMaxima(int velocidadeMaxima) {
         this.velocidadeMaxima = velocidadeMaxima;
+    }
+
+    /**
+     * Ativa todos os sensores do robô para monitoramento.
+     * 
+     * @throws RoboDesligadoException Se o robô estiver desligado
+     */
+    public void acionarSensores() throws RoboDesligadoException {
+        // Verifica se o robô está ligado
+        if (getEstado() == EstadoRobo.LIGADO) {
+            // Ativa cada sensor individualmente
+            for (Sensor sensor : this.getSensores()) {
+                sensor.monitorar();
+            }
+        } else {
+            throw new RoboDesligadoException("Robô desligado não consegue usar sensores");
+        }
     }
 
     /**
