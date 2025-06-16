@@ -8,7 +8,16 @@ import java.util.Map;
 import sensores.NaoSensoriavelException;
 
 public final class MissaoMatador implements Missao{
-    public void executar(AgenteInteligente robo, Ambiente ambiente) throws NaoSensoriavelException {
+
+    AgenteInteligente robo;
+    Ambiente ambiente;
+
+    public MissaoMatador(AgenteInteligente robo, Ambiente ambiente){
+        this.robo = robo;
+        this.ambiente = ambiente;
+    }
+
+    public void executarMissao() throws NaoSensoriavelException {
         // Pensar no que acontece se não for atirador
 
         HashMap<Integer, Integer> x = new HashMap<>();

@@ -1,8 +1,6 @@
 // Declaração do pacote ao qual esta classe pertence
 package robos;
 
-import java.util.ArrayList;
-
 // Importações necessárias para interfaces e exceções
 import comunicacao.Comunicavel;
 import comunicacao.ErroComunicacaoException;
@@ -18,7 +16,6 @@ import robos.subsistemas.ModuloComunicacao;
 public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
     // Velocidade máxima do robô (em unidades do ambiente por movimento)
     private int velocidadeMaxima;
-    private ArrayList<Sensor>sensores;
 
     private final ModuloComunicacao moduloComunicacao = new ModuloComunicacao(this);
     

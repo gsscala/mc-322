@@ -1,6 +1,8 @@
 package robos;
 
 import utils.RandomNumberGenerator;
+import missao.MissaoCentroide;
+import missao.MissaoExploraçãoSegura;
 import sensores.*;
 
 public class RoboDistraido extends AgenteInteligente {
@@ -40,11 +42,21 @@ public class RoboDistraido extends AgenteInteligente {
         return nivelDistracao;
     }
 
-    public void executarMissao() {
+    public void executarMissao(String missao) throws TaskNotFoundException{
         if (new RandomNumberGenerator(0, 100).generate() > nivelDistracao) {
-
             try {
-                getMissao().executar(this, getAmbiente());
+                switch (missao.toLowerCase()){
+                    case "centroide":
+                        MissaoCentroide centroide = new MissaoCentroide(this, getAmbiente());
+                        centroide.executarMissao();
+                        break;
+                    case "exploracao":
+                        MissaoExploraçãoSegura exploracao = new MissaoExploraçãoSegura(this, getAmbiente());
+                        exploracao.executarMissao();
+                        break;
+                    default:
+                        throw new TaskNotFoundException("Missão não encontrada");
+                }
             } catch (NaoSensoriavelException e) {
                 // Ignora exceção
             }

@@ -4,11 +4,9 @@ package robos;
 // Importação de classes necessárias
 import java.util.ArrayList;  // Para uso de listas dinâmicas
 import ambiente.Ambiente;    // Classe que representa o ambiente
-import ambiente.ForaMapaException;  // Exceção para posições fora do mapa
 import sensores.Sensor;      // Interface para sensores
 import utils.DistanceCalculator;  // Utilitário para cálculo de distância
 import entity.*;             // Entidades do sistema
-import obstaculos.ColisaoException;  // Exceção para colisões
 import comunicacao.ErroComunicacaoException;  // Exceção para erros de comunicação
 import robos.subsistemas.ControleMovimento;
 

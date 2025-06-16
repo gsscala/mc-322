@@ -6,7 +6,16 @@ import sensores.NaoSensoriavelException;
 import robos.AgenteInteligente;
 
 public final class MissaoCentroide implements Missao{
-    public void executar(AgenteInteligente robo, Ambiente ambiente) throws NaoSensoriavelException {
+
+    AgenteInteligente robo;
+    Ambiente ambiente;
+
+    public MissaoCentroide(AgenteInteligente robo, Ambiente ambiente){
+        this.robo = robo;
+        this.ambiente = ambiente;
+    }
+
+    public void executarMissao() throws NaoSensoriavelException {
         int px = 0, py = 0, cnt = 0;
         for (Entidade e : ambiente.getEntidades()){
             if (!(e instanceof Robo) || e == robo)

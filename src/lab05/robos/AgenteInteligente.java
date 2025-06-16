@@ -1,5 +1,6 @@
 package robos;
 import missao.Missao;
+import sensores.NaoSensoriavelException;
 
 public abstract class AgenteInteligente extends Robo {
 
@@ -21,5 +22,5 @@ public abstract class AgenteInteligente extends Robo {
         return missao != null;
     }
 
-    public abstract void executarMissao();    
+    public abstract void executarMissao(String missao) throws TaskNotFoundException, NaoSensoriavelException;    
 }

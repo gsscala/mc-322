@@ -6,8 +6,16 @@ import utils.RandomNumberGenerator;
 import robos.Robo;
 
 public final class MissaoExploraçãoSegura implements Missao {
+
+    AgenteInteligente robo;
+    Ambiente ambiente;
+
+    public MissaoExploraçãoSegura(AgenteInteligente robo, Ambiente ambiente){
+        this.robo = robo;
+        this.ambiente = ambiente;
+    }
     
-    public void executar(AgenteInteligente robo, Ambiente ambiente) throws NaoSensoriavelException {
+    public void executarMissao() throws NaoSensoriavelException {
 
         if (! (robo instanceof Sensoreavel))
             throw new NaoSensoriavelException("Robô não consegue explorar de forma segura pois não consegue usar sensores");

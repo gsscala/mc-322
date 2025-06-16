@@ -5,6 +5,9 @@ package robos;
 import comunicacao.Comunicavel;          // Interface para comunicação
 import comunicacao.ErroComunicacaoException;  // Exceção de comunicação
 import entity.Entidade;                  // Interface base para entidades
+import missao.MissaoCentroide;
+import missao.MissaoExploraçãoSegura;
+import missao.MissaoMatador;
 import sensores.*;                  // Interface para sensores
 import utils.RandomNumberGenerator;      // Utilitário para geração de números aleatórios
 import utils.RandomStringGenerator;      // Utilitário para geração de strings aleatórias
@@ -135,8 +138,6 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
         }
     }
 
-
-
     /**
      * Ativa todos os sensores do robô para monitoramento.
      * 
@@ -174,6 +175,28 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
             }
         }
         return null;
+    }
+
+    public void executarMissao(String missao) throws NaoSensoriavelException, TaskNotFoundException{
+        // Missões que o RoboAtirador pode realizar
+        
+        switch (missao.toLowerCase()){
+            case "centroide":
+                MissaoCentroide centroide = new MissaoCentroide(this, getAmbiente());
+                centroide.executarMissao();
+                break;
+            case "exploracao":
+                MissaoExploraçãoSegura exploracao = new MissaoExploraçãoSegura(this, getAmbiente());
+                exploracao.executarMissao();
+                break;
+            case "matador":
+                MissaoMatador matador = new MissaoMatador(this, getAmbiente());
+                matador.executarMissao();
+                break;
+            default:
+                throw new TaskNotFoundException("Missão não encontrada");
+        }
+
     }
 
     /**
