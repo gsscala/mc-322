@@ -1,9 +1,11 @@
 import ambiente.Ambiente;
 import entity.Entidade;
 import robos.AgenteInteligente;
+import robos.Robo;
 import robos.RoboAtirador;
 import java.util.HashMap;
 import java.util.Map;
+import sensores.NaoSensoriavelException;
 
 public final class MissaoMatador implements Missao{
     public void executar(AgenteInteligente robo, Ambiente ambiente) throws NaoSensoriavelException {
@@ -15,7 +17,7 @@ public final class MissaoMatador implements Missao{
 
         
         for (Entidade e : ambiente.getEntidades()){
-            if (e == this)
+            if (! (e instanceof Robo))
                 continue;
 
             if (x.get(e.getPosicaoX()) == null)
