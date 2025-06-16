@@ -9,10 +9,7 @@ import robos.RoboDesligadoException;
  * Classes que implementam esta interface podem ativar uma coleção de sensores
  * para realizar monitoramento ambiental ou de entidades específicas.
  */
-public interface Sensoreavel {
-
-    Arraylist<Sensor>getSensores();
-    
+public interface Sensoreavel {    
     /**
      * Aciona todos os sensores associados ao objeto implementador.
      * 

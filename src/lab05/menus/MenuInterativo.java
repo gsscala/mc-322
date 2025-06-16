@@ -198,7 +198,8 @@ public class MenuInterativo {
         System.out.println("   - Roubar : mesma lógica de Robo");
         System.out.println("   - Explodir <raio> : causa dano letal a todos os robôs dentro do raio especificado (inteiro)");
         
-        System.out.println("-- RoboAtirador (subclasse de RoboAereo):");
+        System.out.println("-- RoboAtirador (subclasse de RoboAereo):"); 
+        // MUDAMOS A PARENT CLASS
         System.out.println("   - Roubar : mesma lógica de Robo");
         System.out.println("   - Subir <deltaZ> : herdado de RoboAereo");
         System.out.println("   - Descer <deltaZ> : herdado de RoboAereo");

@@ -29,7 +29,7 @@ public class Main {
 
         // Criando diferentes tipos de robôs com seus respectivos parâmetros
         RoboAleatorio roboaleatorio = new RoboAleatorio("random", 0, 0, "Norte", 50);  
-        RoboAtirador roboatirador = new RoboAtirador("praprapra", 17, 13, "Leste", 100, "Ak-47");
+        RoboAtirador roboatirador = new RoboAtirador("praprapra", 17, 13, "Leste", "Ak-47");
         RoboTerrestre roboterrestre = new RoboTerrestre("cebolinha", 69, 69, "Sul", 300);        
         RoboAereo roboaereo = new RoboAereo("dog drone", 33, 70, "Norte", 100);  
         Robo robo = new Robo("npc", 20, 0, "Norte");

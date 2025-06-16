@@ -5,16 +5,15 @@ package robos;
 import comunicacao.Comunicavel;          // Interface para comunicação
 import comunicacao.ErroComunicacaoException;  // Exceção de comunicação
 import entity.Entidade;                  // Interface base para entidades
-import sensores.Sensor;                  // Interface para sensores
-import sensores.Sensoreavel;
+import sensores.*;                  // Interface para sensores
 import utils.RandomNumberGenerator;      // Utilitário para geração de números aleatórios
 import utils.RandomStringGenerator;      // Utilitário para geração de strings aleatórias
-
+import java.util.ArrayList;
 /**
  * Classe que representa um robô aéreo armado com capacidade de atirar, comunicar-se e enviar spam.
  * Estende RoboAereo e implementa as interfaces Comunicavel e EnchedorDeSaco.
  */
-public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSaco, Sensoreavel {
+public class RoboAtirador extends AgenteInteligente implements Comunicavel, EnchedorDeSaco, Sensoreavel {
     
     // Nome da arma que o robô possui (valor padrão: "Ak-47")
     private String arma = "Ak-47";
@@ -30,19 +29,16 @@ public class RoboAtirador extends RoboAereo implements Comunicavel, EnchedorDeSa
      * @param altitudeMaxima Limite máximo de altitude
      * @param arma Nome da arma do robô
      */
-    public RoboAtirador(String nome, int xIni, int yIni, String direcao, int altitudeMaxima, String arma) {
+    public RoboAtirador(String nome, int xIni, int yIni, String direcao, String arma) {
         // Chama o construtor da superclasse RoboAereo
-        super(nome, xIni, yIni, direcao, altitudeMaxima);
+        super(nome, xIni, yIni, direcao);
         // Define a arma do robô
         setArma(arma);
         setDescricao("Um robô atirador possui a capacidade de disparar projéteis ou operar armamentos, sendo utilizado em aplicações que demandam lançamento à distância.");
     
-        setSensores(SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
-    }
+        addSensor(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
+        // Para missões que envolvem sensoriamento local 
 
-
-    public Arraylist<Sensor> getSensores (){
-        return sensores;
     }
 
     /**

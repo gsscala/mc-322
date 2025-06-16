@@ -12,7 +12,7 @@ public class RoboDistraido extends AgenteInteligente {
         this.nivelDistracao = nivelDistracao;
 
         addSensor(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
-
+        // Para missões que envolvem sensoriamento local 
     }
 
     /**

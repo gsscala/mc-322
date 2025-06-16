@@ -3,9 +3,11 @@ package comunicacao;
 
 // Importação da exceção personalizada necessária para a interface
 import robos.RoboDesligadoException;
+import robos.subsistemas.ModuloComunicacao;
 
 // Definição da interface Comunicavel
 public interface Comunicavel {
+    private ModuloComunicacao moduloComunicacao;
     /**
      * Método para envio de mensagens a um destinatário
      * @param destinatario Entidade que receberá a mensagem (deve implementar Comunicavel)
