@@ -57,7 +57,7 @@ public class MenuInterativo {
         // Mensagem inicial do sistema
         System.out.println("Bem-vindo ao Simulador de Robôs!");
         System.out.println("Digite 'help' para ver a lista de comandos disponíveis.");
-        System.out.println("Ambiente: " + ambienteAtual.getNome());
+        logger.info("Ambiente: " + ambienteAtual.getNome());
 
         // Loop principal de execução
         while (!terminated) {
@@ -70,7 +70,7 @@ public class MenuInterativo {
         }
 
         // Mensagem de encerramento
-        System.out.println("Simulação finalizada");
+        logger.info("Simulação finalizada");
         // Fecha o scanner para liberar recursos
         scanner.close();
     }
@@ -221,7 +221,7 @@ public class MenuInterativo {
         }
         catch (RoboNotFoundException e){
             // Trata caso robô não seja encontrado
-            System.err.println(e.getMessage());
+            getLogger().warning(e.getMessage());
             return;
         }
         
@@ -236,7 +236,7 @@ public class MenuInterativo {
                                 EstadoRobo.LIGADO : EstadoRobo.DESLIGADO;
                                 
         // Aplica o novo estado e exibe resultado
-        System.out.println(robo.setEstado(novoEstado));
+        getLogger().info(robo.setEstado(novoEstado));
     }
 
     // Método para listar tarefas de um robô específico
@@ -253,7 +253,7 @@ public class MenuInterativo {
             robo = findRobo(args[1]);
         } catch (RoboNotFoundException e){
             // Trata caso robô não seja encontrado
-            System.err.println(e.getMessage());
+            getLogger().warning(e.getMessage());
             return;
         }
         
@@ -334,7 +334,7 @@ public class MenuInterativo {
             robo = findRobo(args[1]);
         }catch (RoboNotFoundException e){
             // Trata robô não encontrado
-            System.err.println(e.getMessage());
+            getLogger().warning(e.getMessage());
             return;
         }
 
@@ -344,10 +344,10 @@ public class MenuInterativo {
             int deltaY = Integer.parseInt(args[3]);
             
             // Executa o movimento
-            robo.getControleMovimento().mover(deltaX, deltaY);
+            robo.mover(deltaX, deltaY);
             
             // Exibe nova posição
-            System.out.println(robo.getNome() + " movido para (" + 
+            getLogger().info(robo.getNome() + " movido para (" + 
                                robo.getPosicaoX() + ", " + 
                                robo.getPosicaoY() + ")");
 
@@ -356,7 +356,7 @@ public class MenuInterativo {
                                robo.getPosicaoY() + ")");
         } catch (NumberFormatException e) {
             // Trata erros de conversão numérica
-            System.out.println("Coordenadas inválidas. Use números inteiros para deltaX e deltaY.");
+            System.err.println("Coordenadas inválidas. Use números inteiros para deltaX e deltaY.");
         }
     }
 
@@ -391,13 +391,13 @@ public class MenuInterativo {
             robo.executarTarefa(comando, args_tarefa);
         } catch (RoboDesligadoException e) {
             // Trata robô desligado
-            System.out.println(e.getMessage());
+            getLogger().warning(e.getMessage());
         } catch (ErroComunicacaoException e) {
             // Trata erros de comunicação
-            System.out.println(e.getMessage());
+            getLogger().warning(e.getMessage());
         } catch (TaskNotFoundException e) {
             // Trata tarefa inexistente
-            System.out.println(e.getMessage());
+            getLogger().warning(e.getMessage());
         }
     }
 
@@ -415,7 +415,7 @@ public class MenuInterativo {
             robo = findRobo(args[1]);
         }
         catch (RoboNotFoundException e){
-            System.err.println(e.getMessage());
+            getLogger().warning(e.getMessage());
             return;
         }
 
@@ -429,11 +429,11 @@ public class MenuInterativo {
         } 
         catch (RoboDesligadoException e) {
             // Trata robô desligado
-            System.err.println(e.getMessage()); 
+            getLogger().warning(e.getMessage()); 
         }
         catch (NaoSensoriavelException e){
             // Trata robô sem sensores
-            System.err.println(e.getMessage());
+            getLogger().warning(e.getMessage());
         }
     }
     
@@ -469,7 +469,7 @@ public class MenuInterativo {
             remetente = findRobo(args[1]);
         }
         catch (RoboNotFoundException e){
-            System.err.println(e.getMessage());
+            getLogger().warning(e.getMessage());
             return;
         }
 
@@ -478,7 +478,7 @@ public class MenuInterativo {
             // Busca robô destinatário
             destinatario = findRobo(args[2]);
         }catch (RoboNotFoundException e){
-            System.err.println(e.getMessage());
+            getLogger().warning(e.getMessage());
             return;
         }
 
@@ -490,16 +490,16 @@ public class MenuInterativo {
             if (remetente instanceof Comunicavel && destinatario instanceof Comunicavel) {
                 // Envia a mensagem
                 ((Comunicavel) remetente).enviarMensagem((Comunicavel) destinatario, mensagem);
-                System.out.println("Mensagem enviada de " + remetente.getNome() + " para " + destinatario.getNome());
+                getLogger().info("Mensagem enviada de " + remetente.getNome() + " para " + destinatario.getNome());
             } else {
                 throw new ErroComunicacaoException("Robôs não são comunicaveis");
             }
         } catch (RoboDesligadoException e) {
             // Trata robô desligado
-            System.err.println("Erro ao enviar mensagem: " + e.getMessage());
+            getLogger().warning("Erro ao enviar mensagem: " + e.getMessage());
         } catch (ErroComunicacaoException e) {
             // Trata outros erros de comunicação
-            System.err.println("Erro ao enviar mensagem: " +  e.getMessage());
+            getLogger().warning("Erro ao enviar mensagem: " +  e.getMessage());
         }
     }
 

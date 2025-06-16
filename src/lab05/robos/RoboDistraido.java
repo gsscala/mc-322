@@ -1,25 +1,18 @@
 package robos;
 
 import utils.RandomNumberGenerator;
-
-import java.util.ArrayList;
-
-import sensores.NaoSensoriavelException;
-import sensores.Sensor;
+import sensores.*;
 
 public class RoboDistraido extends AgenteInteligente {
 
-    private double nivelDistracao;
-    
-    private ArrayList<Sensor>sensores;
-    
-    public RoboDistraido(String nome, int xIni, int yIni, String direcao, double nivelDistracao) {
+    private int nivelDistracao;
+
+    public RoboDistraido(String nome, int xIni, int yIni, String direcao, int nivelDistracao) {
         super(nome, xIni, yIni, direcao);
         this.nivelDistracao = nivelDistracao;
 
-        setSensores(SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
+        addSensor(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
 
-        setSensores(SensorUmidade(new RandomNumberGenerator(1, 8).generate()));
     }
 
     /**
@@ -39,19 +32,11 @@ public class RoboDistraido extends AgenteInteligente {
         }
     }
 
-    public Arraylist<Sensor> getSensores (){
-        return sensores;
-    }
-
-    public setSensores(Sensor sensor){
-        sensores.add(sensor);
-    }
-
-    public void setNivelDistracao(double nivelDistracao) {
+    public void setNivelDistracao(int nivelDistracao) {
         this.nivelDistracao = nivelDistracao;
     }
 
-    public double getNivelDistracao() {
+    public int getNivelDistracao() {
         return nivelDistracao;
     }
 

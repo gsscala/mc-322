@@ -225,6 +225,10 @@ public class Robo implements Entidade, Ladrao {
         }
     }
 
+    public void mover(int deltaX, int deltaY) {
+        getControleMovimento().mover(deltaX, deltaY);
+    }
+
     /**
      * Executa uma tarefa específica com base em comando.
      * 

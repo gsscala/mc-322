@@ -13,7 +13,6 @@ public class LoggerConfig {
         final Logger logger = Logger.getLogger("log das explorações");
         
         String logFilePath = "logs/exploration.log";
-        // entender path relativo em java 
         
         FileHandler fileHandler = null; 
         try {
