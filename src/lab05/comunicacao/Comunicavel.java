@@ -7,7 +7,8 @@ import robos.subsistemas.ModuloComunicacao;
 
 // Definição da interface Comunicavel
 public interface Comunicavel {
-    ModuloComunicacao moduloComunicacao = new ModuloComunicacao(this);
+
+    ModuloComunicacao getModuloComunicacao(); // Require implementing classes to expose their module
 
     /**
      * Método para envio de mensagens a um destinatário
@@ -15,12 +16,16 @@ public interface Comunicavel {
      * @param mensagem Conteúdo textual da comunicação
      * @throws RoboDesligadoException Exceção lançada se o robô remetente estiver desligado
      */
-    void enviarMensagem(Comunicavel destinatario, String mensagem) throws RoboDesligadoException;
+    default void enviarMensagem(Comunicavel destinatario, String mensagem) throws RoboDesligadoException {
+        getModuloComunicacao().enviarMensagem(destinatario, mensagem);
+    }
 
     /**
      * Método para recebimento de mensagens
      * @param mensagem Conteúdo textual recebido
      * @throws RoboDesligadoException Exceção lançada se o robô destinatário estiver desligado
      */
-    void receberMensagem(String mensagem) throws RoboDesligadoException;
+    default void receberMensagem(String mensagem) throws RoboDesligadoException {
+        getModuloComunicacao().receberMensagem(mensagem);
+    }
 }

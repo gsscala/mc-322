@@ -9,6 +9,8 @@ import comunicacao.ErroComunicacaoException;
 import sensores.*;
 import utils.RandomNumberGenerator;
 
+import robos.subsistemas.ModuloComunicacao;
+
 /**
  * Classe que representa um robô terrestre especializado.
  * Estende a classe Robo básica e implementa capacidade de comunicação.
@@ -18,6 +20,7 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
     private int velocidadeMaxima;
     private ArrayList<Sensor>sensores;
 
+    private final ModuloComunicacao moduloComunicacao = new ModuloComunicacao(this);
     
     /**
      * Construtor que inicializa o robô terrestre com parâmetros específicos.
@@ -43,22 +46,16 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
             setVelocidadeMaxima(velocidadeMaxima);
         }
 
-        setSensores(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
+        addSensor(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
 
-        setSensores(new SensorUmidade(new RandomNumberGenerator(1, 8).generate()));
 
         setDescricao("Um robô terrestre opera e se desloca sobre a superfície do solo e pode superar obstaculos no seu caminho.");
     }
 
+    public ModuloComunicacao getModuloComunicacao() {
+        return moduloComunicacao;
+    }
     
-    public ArrayList<Sensor> getSensores (){
-        return sensores;
-    }
-
-    public void setSensores(Sensor sensor){
-        sensores.add(sensor);
-    }
-
     /**
      * Obtém a velocidade máxima configurada para o robô.
      * @return Velocidade máxima em unidades de movimento
@@ -166,13 +163,6 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
      */
     @Override
     public void receberMensagem(String mensagem) throws RoboDesligadoException {
-        // Verifica estado antes de receber
-        if (getEstado() == EstadoRobo.LIGADO) {
-            // Exibe a mensagem recebida
-            System.out.println(getNome() + " recebeu a mensagem: " + mensagem);
-        } else {
-            throw new RoboDesligadoException("Destinatario desligado, não é possível receber mensagem.");
-        }   
     }
 
     /**
