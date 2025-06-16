@@ -1,7 +1,9 @@
+package missao;
 import ambiente.Ambiente;
 import robos.AgenteInteligente;
 import sensores.*;
 import utils.RandomNumberGenerator;
+import robos.Robo;
 
 public final class MissaoExploraçãoSegura implements Missao {
     
@@ -31,9 +33,13 @@ public final class MissaoExploraçãoSegura implements Missao {
             if (stepy == 0)
                 stepy = -1;
 
-            sensoreavelRobo.mover(stepx, stepy);
+            ((Robo) robo).mover(stepx, stepy);
 
-            sensoreavelRobo.acionarSensores();
+            try{
+                sensoreavelRobo.acionarSensores();
+            }catch (Exception e){
+                System.err.println(e);
+            }
 
             // nao acaba quando achar obstaculo
         }

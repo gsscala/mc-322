@@ -1,3 +1,4 @@
+package missao;
 import ambiente.Ambiente;
 import entity.Entidade;
 import robos.AgenteInteligente;
