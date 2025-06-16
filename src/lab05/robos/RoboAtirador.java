@@ -136,22 +136,7 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
         }
     }
 
-    /**
-     * Implementação da interface Comunicavel: recebe uma mensagem.
-     * 
-     * @param mensagem Conteúdo da mensagem recebida
-     * @throws RoboDesligadoException Se o robô destinatário estiver desligado
-     */
-    @Override
-    public void receberMensagem(String mensagem) throws RoboDesligadoException {
-        // Verifica se o robô está ligado
-        if (getEstado() == EstadoRobo.LIGADO) {
-            // Exibe a mensagem recebida
-            System.out.println(getNome() + " recebeu a mensagem: " + mensagem);
-        } else {
-            throw new RoboDesligadoException("Destinatario desligado, não é possível receber mensagem.");
-        }
-    }
+
 
     /**
      * Ativa todos os sensores do robô para monitoramento.
@@ -229,6 +214,7 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
                 case "descer":
                     descer(Integer.parseInt(args[0]));  // Tarefa herdada
                     break;
+                // MUDOU PRA AGENTE INTELIGENTE, TEM QUE MUDAR TODA A INFRA
                 default:
                     // Tarefa não reconhecida
                     throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);

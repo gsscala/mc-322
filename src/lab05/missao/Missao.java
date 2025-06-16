@@ -1,5 +1,3 @@
-package missao;
-
 import robos.AgenteInteligente;
 import sensores.NaoSensoriavelException;
 import ambiente.Ambiente;

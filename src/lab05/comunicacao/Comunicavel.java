@@ -7,7 +7,8 @@ import robos.subsistemas.ModuloComunicacao;
 
 // Definição da interface Comunicavel
 public interface Comunicavel {
-    private ModuloComunicacao moduloComunicacao;
+    ModuloComunicacao moduloComunicacao = new ModuloComunicacao(this);
+
     /**
      * Método para envio de mensagens a um destinatário
      * @param destinatario Entidade que receberá a mensagem (deve implementar Comunicavel)
