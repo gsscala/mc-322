@@ -2,7 +2,7 @@ import ambiente.Ambiente;
 import entity.Entidade;
 import robos.Robo;
 
-public class MissaoCentroide implements Missao{
+public final class MissaoCentroide implements Missao{
     public void executar(AgenteInteligente robo, Ambiente ambiente){
         int pX = 0, py = 0;
         for (Entidade e : ambiente.getEntidades()){

@@ -6,7 +6,7 @@ import sensores.SensorProximidade;
 import sensores.Sensoreavel;
 import utils.RandomNumberGenerator;
 
-public class MissaoExploraçãoSegura implements Missao {
+public final class MissaoExploraçãoSegura implements Missao {
     
     public void executar(AgenteInteligente robo, Ambiente ambiente) throws NaoSensoriavelException {
 
