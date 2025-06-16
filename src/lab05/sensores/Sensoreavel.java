@@ -1,6 +1,8 @@
 // Declaração do pacote ao qual esta interface pertence
 package sensores;
 
+import java.util.ArrayList;
+
 // Importação da exceção necessária para a assinatura do método
 import robos.RoboDesligadoException;
 
@@ -19,4 +21,6 @@ public interface Sensoreavel {
      *                                 como incompatibilidade com o alvo ou falha de leitura
      */
     void acionarSensores() throws RoboDesligadoException, NaoSensoriavelException;
+
+    ArrayList<Sensor>getSensores();
 }

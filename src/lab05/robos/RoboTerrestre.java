@@ -6,10 +6,7 @@ import java.util.ArrayList;
 // Importações necessárias para interfaces e exceções
 import comunicacao.Comunicavel;
 import comunicacao.ErroComunicacaoException;
-import sensores.Sensor;
-import sensores.SensorProximidade;
-import sensores.SensorUmidade;
-import sensores.Sensoreavel;
+import sensores.*;
 import utils.RandomNumberGenerator;
 
 /**
@@ -46,19 +43,19 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
             setVelocidadeMaxima(velocidadeMaxima);
         }
 
-        setSensores(SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
+        setSensores(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
 
-        setSensores(SensorUmidade(new RandomNumberGenerator(1, 8).generate()));
+        setSensores(new SensorUmidade(new RandomNumberGenerator(1, 8).generate()));
 
         setDescricao("Um robô terrestre opera e se desloca sobre a superfície do solo e pode superar obstaculos no seu caminho.");
     }
 
     
-    public Arraylist<Sensor> getSensores (){
+    public ArrayList<Sensor> getSensores (){
         return sensores;
     }
 
-    public setSensores(Sensor sensor){
+    public void setSensores(Sensor sensor){
         sensores.add(sensor);
     }
 

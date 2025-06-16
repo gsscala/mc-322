@@ -1,6 +1,6 @@
 package robos;
 
-import missao.Missao;
+import Missao;
 
 public abstract class AgenteInteligente extends Robo {
 

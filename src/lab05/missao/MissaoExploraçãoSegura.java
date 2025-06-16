@@ -1,21 +1,18 @@
-package missao;
 import ambiente.Ambiente;
 import robos.AgenteInteligente;
-import sensores.NaoSensoriavelException;
-import sensores.SensorProximidade;
-import sensores.Sensoreavel;
+import sensores.*;
 import utils.RandomNumberGenerator;
 
 public final class MissaoExploraçãoSegura implements Missao {
     
     public void executar(AgenteInteligente robo, Ambiente ambiente) throws NaoSensoriavelException {
 
-        if (! (robo instanceof SensorProximidade))
+        if (! (robo instanceof Sensoreavel))
             throw new NaoSensoriavelException("Robô não consegue explorar de forma segura pois não consegue usar sensores");
 
         Sensoreavel sensoreavelRobo = (Sensoreavel) robo;
 
-        bool valid = false;
+        Boolean valid = false;
 
         for (Sensor sensor : sensoreavelRobo.getSensores())
             valid |= (sensor instanceof SensorProximidade);

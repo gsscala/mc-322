@@ -17,7 +17,6 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
     
     // Nome da arma que o robô possui (valor padrão: "Ak-47")
     private String arma = "Ak-47";
-    private ArrayList<Sensor>sensores;
 
     /**
      * Construtor que inicializa o robô atirador.

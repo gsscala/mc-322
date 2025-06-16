@@ -2,7 +2,6 @@ import ambiente.Ambiente;
 import entity.Entidade;
 import robos.AgenteInteligente;
 import robos.Robo;
-import robos.RoboAtirador;
 import java.util.HashMap;
 import java.util.Map;
 import sensores.NaoSensoriavelException;
