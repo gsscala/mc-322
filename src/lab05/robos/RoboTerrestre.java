@@ -128,39 +128,6 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
             super.mover(deltaX, deltaY);
         }
     }
-    
-    /**
-     * Implementação da interface Comunicavel: envia mensagem para outro robô.
-     * 
-     * @param destinatario Robô que receberá a mensagem
-     * @param mensagem Conteúdo da mensagem
-     * @throws RoboDesligadoException Se o robô remetente estiver desligado
-     */
-    @Override
-    public void enviarMensagem(Comunicavel destinatario, String mensagem) throws RoboDesligadoException {
-        // Verifica estado do robô antes de enviar
-        if (getEstado() == EstadoRobo.LIGADO) {
-            try {
-                // Tenta entregar a mensagem ao destinatário
-                destinatario.receberMensagem(mensagem);
-            } catch (RoboDesligadoException e) {
-                // Trata erro se destinatário estiver desligado
-                System.out.println("Erro ao enviar mensagem: " + e.getMessage());
-            }
-        } else {
-            throw new RoboDesligadoException("Remetente desligado, não é possível enviar mensagem.");
-        }
-    }       
-
-    /**
-     * Implementação da interface Comunicavel: recebe uma mensagem.
-     * 
-     * @param mensagem Conteúdo da mensagem recebida
-     * @throws RoboDesligadoException Se o robô destinatário estiver desligado
-     */
-    @Override
-    public void receberMensagem(String mensagem) throws RoboDesligadoException {
-    }
 
     /**
      * Executa tarefas específicas para robôs terrestres.
