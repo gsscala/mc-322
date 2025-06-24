@@ -5,9 +5,8 @@ package robos;
 import comunicacao.Comunicavel;
 import comunicacao.ErroComunicacaoException;
 import sensores.*;
-import utils.RandomNumberGenerator;
-
 import robos.subsistemas.ModuloComunicacao;
+import robos.subsistemas.GerenciadorSensores;
 
 /**
  * Classe que representa um robô terrestre especializado.
@@ -18,6 +17,7 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
     private int velocidadeMaxima;
 
     private final ModuloComunicacao moduloComunicacao = new ModuloComunicacao(this);
+    private final GerenciadorSensores gerenciadorSensores = new GerenciadorSensores(this);
     
     /**
      * Construtor que inicializa o robô terrestre com parâmetros específicos.
@@ -43,14 +43,15 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
             setVelocidadeMaxima(velocidadeMaxima);
         }
 
-        addSensor(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
-
-
         setDescricao("Um robô terrestre opera e se desloca sobre a superfície do solo e pode superar obstaculos no seu caminho.");
     }
 
     public ModuloComunicacao getModuloComunicacao() {
         return moduloComunicacao;
+    }
+
+    public GerenciadorSensores getGerenciadorSensores() {
+        return gerenciadorSensores;
     }
     
     /**
@@ -70,23 +71,6 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
     }
 
     /**
-     * Ativa todos os sensores do robô para monitoramento.
-     * 
-     * @throws RoboDesligadoException Se o robô estiver desligado
-     */
-    public void acionarSensores() throws RoboDesligadoException {
-        // Verifica se o robô está ligado
-        if (getEstado() == EstadoRobo.LIGADO) {
-            // Ativa cada sensor individualmente
-            for (Sensor sensor : this.getSensores()) {
-                sensor.monitorar();
-            }
-        } else {
-            throw new RoboDesligadoException("Robô desligado não consegue usar sensores");
-        }
-    }
-
-    /**
      * Move o robô considerando uma velocidade específica.
      * Implementa lógica de "turbo" quando a velocidade é alta o suficiente.
      * 
@@ -94,7 +78,7 @@ public class RoboTerrestre extends Robo implements Comunicavel, Sensoreavel {
      * @param deltaY Variação no eixo Y
      * @param velocidade Velocidade do movimento
      */
-    public void mover(int deltaX, int deltaY, int velocidade) {
+    public void turbo(int deltaX, int deltaY, int velocidade) {
         // Verifica se a velocidade excede o máximo permitido
         if (velocidade > getVelocidadeMaxima()) {
             System.out.println("Não é permitido exceder a velocidade máxima: " + getVelocidadeMaxima());

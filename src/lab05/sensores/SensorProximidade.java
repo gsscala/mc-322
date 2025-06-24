@@ -39,8 +39,7 @@ public class SensorProximidade extends Sensor {
             // Verifica se a entidade está dentro do raio de detecção
             if (distancia.calculateDistance() <= getRaio()) {
                 // Imprime alerta com a distância formatada
-                System.out.printf("- Obstáculo detectado a %.2f unidades de distância.%n", 
-                                 distancia.calculateDistance());
+                System.out.printf("- Obstáculo detectado no raio de %.2f%n", getRaio());
             }
         }
     }

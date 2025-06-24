@@ -1,25 +1,26 @@
 // Declaração do pacote ao qual esta classe pertence
 package robos;
 
+import java.util.List;
+
 // Importações necessárias para a classe
 import comunicacao.Comunicavel;          // Interface para comunicação
 import comunicacao.ErroComunicacaoException;  // Exceção de comunicação
 import entity.Entidade;                  // Interface base para entidades
-import missao.MissaoCentroide;
-import missao.MissaoExploraçãoSegura;
-import missao.MissaoMatador;
-import sensores.*;                  // Interface para sensores
 import utils.RandomNumberGenerator;      // Utilitário para geração de números aleatórios
 import utils.RandomStringGenerator;      // Utilitário para geração de strings aleatórias
-import java.util.ArrayList;
+import robos.subsistemas.ModuloComunicacao;  // Módulo de comunicação do robô
+
 /**
  * Classe que representa um robô aéreo armado com capacidade de atirar, comunicar-se e enviar spam.
  * Estende RoboAereo e implementa as interfaces Comunicavel e EnchedorDeSaco.
  */
-public class RoboAtirador extends AgenteInteligente implements Comunicavel, EnchedorDeSaco, Sensoreavel {
+public class RoboAtirador extends AgenteInteligente implements Comunicavel, EnchedorDeSaco {
     
     // Nome da arma que o robô possui (valor padrão: "Ak-47")
     private String arma = "Ak-47";
+
+    private ModuloComunicacao moduloComunicacao = new ModuloComunicacao(this);
 
     /**
      * Construtor que inicializa o robô atirador.
@@ -37,10 +38,6 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
         // Define a arma do robô
         setArma(arma);
         setDescricao("Um robô atirador possui a capacidade de disparar projéteis ou operar armamentos, sendo utilizado em aplicações que demandam lançamento à distância.");
-    
-        addSensor(new SensorProximidade(new RandomNumberGenerator(1, 8).generate()));
-        // Para missões que envolvem sensoriamento local 
-
     }
 
     /**
@@ -58,60 +55,63 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
     public String getArma() {
         return this.arma;
     }
+
+    public ModuloComunicacao getModuloComunicacao() {
+        return moduloComunicacao;
+    }
     
     /**
      * Simula o ato de atirar, eliminando robôs inimigos na linha de tiro.
      * A direção do tiro depende da orientação atual do robô.
      */
     public void atirar() {
-        // Remove robôs inimigos que estão na linha de tiro
-        getAmbiente().getEntidades().removeIf(enemy -> 
-            enemy != this && // Não é o próprio robô
-            enemy instanceof Robo && // É um robô
-            ( // Verifica se está na linha de tiro:
-                // Alinhado verticalmente e na direção Norte/Sul
-                (enemy.getPosicaoX() == this.getPosicaoX() && 
-                    ((enemy.getPosicaoY() >= this.getPosicaoY() && this.getDirecao().equals("Norte")) ||
-                    (enemy.getPosicaoY() <= this.getPosicaoY() && this.getDirecao().equals("Sul"))) ||
-                // Alinhado horizontalmente e na direção Leste/Oeste
-                (enemy.getPosicaoY() == this.getPosicaoY() && 
-                    ((enemy.getPosicaoX() >= this.getPosicaoX() && this.getDirecao().equals("Leste")) ||
-                    (enemy.getPosicaoX() <= this.getPosicaoX() && this.getDirecao().equals("Oeste")))
-            )))
-        );
-        
-        // Mensagem de confirmação do disparo
-        System.out.println(this.getNome() + " acaba de eliminar os inimigos em seu caminho ao utilizar " + this.getArma());
-    }
+        List<Entidade> entidades = getAmbiente().getEntidades();
+        int i = 0;
+        boolean eliminouAlguem = false;
 
-    /**
-     * Implementação da interface Comunicavel: envia mensagem para outro robô.
-     * 
-     * @param destinatario Robô que receberá a mensagem
-     * @param mensagem Conteúdo da mensagem
-     * @throws RoboDesligadoException Se o robô remetente estiver desligado
-     */
-    @Override
-    public void enviarMensagem(Comunicavel destinatario, String mensagem) throws RoboDesligadoException {
-        // Verifica se o robô está ligado
-        if (getEstado() == EstadoRobo.LIGADO) {
-            // Registra a mensagem na central de comunicação
-            getAmbiente().getCentralComunicacao().registrarMensagem(
-                this.getNome(), 
-                ((Robo) destinatario).getNome(), 
-                mensagem
-            );
-            try {
-                // Tenta entregar a mensagem ao destinatário
-                destinatario.receberMensagem(mensagem);
-            } catch (RoboDesligadoException e) {
-                // Trata erro se o destinatário estiver desligado
-                System.out.println("Erro ao enviar mensagem: " + e.getMessage());
+        while (i < entidades.size()) {
+            Entidade entidade = entidades.get(i);
+
+            if (entidade == this || !(entidade instanceof Robo)) {
+                i++;
+                continue;
             }
-        } else {
-            throw new RoboDesligadoException("Remetente desligado, não é possível enviar mensagem.");
+
+            Robo inimigo = (Robo) entidade;
+            boolean alinhadoVertical = inimigo.getPosicaoX() == this.getPosicaoX();
+            boolean alinhadoHorizontal = inimigo.getPosicaoY() == this.getPosicaoY();
+
+            boolean naLinhaDeTiro = false;
+
+            switch (this.getDirecao()) {
+                case "Norte":
+                    naLinhaDeTiro = alinhadoVertical && inimigo.getPosicaoY() >= this.getPosicaoY();
+                    break;
+                case "Sul":
+                    naLinhaDeTiro = alinhadoVertical && inimigo.getPosicaoY() <= this.getPosicaoY();
+                    break;
+                case "Leste":
+                    naLinhaDeTiro = alinhadoHorizontal && inimigo.getPosicaoX() >= this.getPosicaoX();
+                    break;
+                case "Oeste":
+                    naLinhaDeTiro = alinhadoHorizontal && inimigo.getPosicaoX() <= this.getPosicaoX();
+                    break;
+            }
+
+            if (naLinhaDeTiro) {
+                entidades.remove(i); // don't increment i, because list shifted
+                System.out.println(this.getNome() + " eliminou " + inimigo.getNome() + " com sua " + this.getArma());
+                eliminouAlguem = true;
+            } else {
+                i++; // only increment if not removed
+            }
+        }
+
+        if (!eliminouAlguem) {
+            System.out.println(this.getNome() + " atirou com sua " + this.getArma() + ", mas não havia inimigos na linha de tiro.");
         }
     }
+
 
     /**
      * Implementação da interface EnchedorDeSaco: envia múltiplas mensagens aleatórias.
@@ -139,23 +139,6 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
     }
 
     /**
-     * Ativa todos os sensores do robô para monitoramento.
-     * 
-     * @throws RoboDesligadoException Se o robô estiver desligado
-     */
-    public void acionarSensores() throws RoboDesligadoException {
-        // Verifica se o robô está ligado
-        if (getEstado() == EstadoRobo.LIGADO) {
-            // Ativa cada sensor individualmente
-            for (Sensor sensor : this.getSensores()) {
-                sensor.monitorar();
-            }
-        } else {
-            throw new RoboDesligadoException("Robô desligado não consegue usar sensores");
-        }
-    }
-
-    /**
      * Procura um robô pelo nome no ambiente.
      * 
      * @param nome Nome do robô a ser encontrado
@@ -177,26 +160,8 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
         return null;
     }
 
-    public void executarMissao(String missao) throws NaoSensoriavelException, TaskNotFoundException{
-        // Missões que o RoboAtirador pode realizar
-        
-        switch (missao.toLowerCase()){
-            case "centroide":
-                MissaoCentroide centroide = new MissaoCentroide(this, getAmbiente());
-                centroide.executarMissao();
-                break;
-            case "exploracao":
-                MissaoExploraçãoSegura exploracao = new MissaoExploraçãoSegura(this, getAmbiente());
-                exploracao.executarMissao();
-                break;
-            case "matador":
-                MissaoMatador matador = new MissaoMatador(this, getAmbiente());
-                matador.executarMissao();
-                break;
-            default:
-                throw new TaskNotFoundException("Missão não encontrada");
-        }
-
+    public void executarMissao(){
+        getMissao().executarMissao();   
     }
 
     /**
@@ -230,13 +195,6 @@ public class RoboAtirador extends AgenteInteligente implements Comunicavel, Ench
                 case "roubar":
                     roubar();  // Tarefa herdada
                     break;
-                case "subir":
-                    subir(Integer.parseInt(args[0]));  // Tarefa herdada
-                    break;
-                case "descer":
-                    descer(Integer.parseInt(args[0]));  // Tarefa herdada
-                    break;
-                // MUDOU PRA AGENTE INTELIGENTE, TEM QUE MUDAR TODA A INFRA
                 default:
                     // Tarefa não reconhecida
                     throw new TaskNotFoundException("Tarefa não encontrada: " + tarefa);

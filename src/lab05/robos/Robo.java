@@ -27,7 +27,8 @@ public class Robo implements Entidade, Ladrao {
     private int bateria = 2000;   // Nível de bateria inicial
     private Ambiente ambiente;    // Ambiente onde o robô está inserido
     protected ArrayList<Sensor> sensores = new ArrayList<>();  // Lista de sensores acoplados
-    private ControleMovimento controleMovimento;
+
+    private ControleMovimento controleMovimento = new ControleMovimento(this);  // Controle de movimento do robô
 
     /**
      * Construtor que inicializa o robô com parâmetros básicos.
@@ -37,13 +38,14 @@ public class Robo implements Entidade, Ladrao {
      * @param yIni Posição inicial no eixo Y
      * @param direcao Direção inicial
      */
+
+
     public Robo(String nome, int xIni, int yIni, String direcao) {
         setNome(nome);           // Define o nome
         setPosicaoX(xIni);       // Define posição X inicial
         setPosicaoY(yIni);       // Define posição Y inicial
         setDirecao(direcao);     // Define direção inicial
         setDescricao("Um robô é um dispositivo programável, autônomo ou semiautônomo, projetado para executar tarefas específicas e interagir com seu ambiente.");
-        controleMovimento = new ControleMovimento(this);
     }
 
     /**

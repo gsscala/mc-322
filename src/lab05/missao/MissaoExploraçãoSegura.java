@@ -1,7 +1,10 @@
 package missao;
+import java.util.logging.Logger;
+
 import ambiente.Ambiente;
+import entity.Entidade;
 import robos.AgenteInteligente;
-import sensores.*;
+import utils.DistanceCalculator;
 import utils.RandomNumberGenerator;
 import robos.Robo;
 
@@ -9,47 +12,43 @@ public final class MissaoExploraçãoSegura implements Missao {
 
     AgenteInteligente robo;
     Ambiente ambiente;
+    private final Logger logger;
+
+    public Robo getRobo() {
+        return robo;
+    }   
+
+    public Ambiente getAmbiente() {
+        return ambiente;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
 
     public MissaoExploraçãoSegura(AgenteInteligente robo, Ambiente ambiente){
         this.robo = robo;
         this.ambiente = ambiente;
+        logger = Logger.getLogger("logs/exploracao" + robo.getNome() + ".log");
     }
     
-    public void executarMissao() throws NaoSensoriavelException {
-
-        if (! (robo instanceof Sensoreavel))
-            throw new NaoSensoriavelException("Robô não consegue explorar de forma segura pois não consegue usar sensores");
-
-        Sensoreavel sensoreavelRobo = (Sensoreavel) robo;
-
-        Boolean valid = false;
-
-        for (Sensor sensor : sensoreavelRobo.getSensores())
-            valid |= (sensor instanceof SensorProximidade);
-        
-        if (! valid)
-            throw new NaoSensoriavelException("Robô não consegue explorar de forma segura pois não consegue usar sensores");
-
+    public void executarMissao() {
         int numIt = new RandomNumberGenerator(10, 50).generate();
 
-        for (int i = 0; i < numIt; i++){
-            int stepx = new RandomNumberGenerator(0, 1).generate();
-            if (stepx == 0)
-                stepx = -1;
-            
-            int stepy = new RandomNumberGenerator(0, 1).generate();
-            if (stepy == 0)
-                stepy = -1;
+        for (int i = 0; i < numIt; i++) {
+            int stepx = new RandomNumberGenerator(-1, 3).generate();
+            int stepy = new RandomNumberGenerator(-2, 4).generate();
 
-            ((Robo) robo).mover(stepx, stepy);
+            getRobo().mover(stepx, stepy);
+            getLogger().info("Passo " + i + ": Robô moveu-se para (" + getRobo().getPosicaoX() + ", " + getRobo().getPosicaoY() + ")");
 
-            try{
-                sensoreavelRobo.acionarSensores();
-            }catch (Exception e){
-                System.err.println(e);
+            for (Entidade obstaculo : getAmbiente().getEntidades()) {
+                DistanceCalculator distancia = new DistanceCalculator(robo, obstaculo);
+                if (distancia.calculateDistance() <= 20) {
+                    getLogger().warning("Obstáculo detectado a menos de 20 unidades. Missão abortada.");
+                    return;
+                }
             }
-
-            // nao acaba quando achar obstaculo
         }
     }
 }

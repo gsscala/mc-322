@@ -9,14 +9,12 @@ import java.util.logging.SimpleFormatter;
 
 public class LoggerConfig {
     
-    public static Logger getLogger() {
-        final Logger logger = Logger.getLogger("log das explorações");
-        
-        String logFilePath = "logs/exploration.log";
-        
+    public static Logger getLogger(String pathName) {
+        final Logger logger = Logger.getLogger("missoes");
+                
         FileHandler fileHandler = null; 
         try {
-            fileHandler = new FileHandler(logFilePath, true);
+            fileHandler = new FileHandler(pathName, true);
 
             fileHandler.setFormatter(new SimpleFormatter());
 

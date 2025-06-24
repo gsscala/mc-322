@@ -25,19 +25,25 @@ public class ModuloComunicacao {
      * @throws RoboDesligadoException Se o robô remetente estiver desligado
      */
     public void enviarMensagem(Comunicavel destinatario, String mensagem) throws RoboDesligadoException {
-        // Verifica estado do robô antes de enviar
+        // Verifica se o robô está ligado
         if (getRobo().getEstado() == EstadoRobo.LIGADO) {
+            // Registra a mensagem na central de comunicação
+            getRobo().getAmbiente().getCentralComunicacao().registrarMensagem(
+                getRobo().getNome(), 
+                ((Robo) destinatario).getNome(), 
+                mensagem
+            );
             try {
                 // Tenta entregar a mensagem ao destinatário
                 destinatario.receberMensagem(mensagem);
             } catch (RoboDesligadoException e) {
-                // Trata erro se destinatário estiver desligado
+                // Trata erro se o destinatário estiver desligado
                 System.out.println("Erro ao enviar mensagem: " + e.getMessage());
             }
         } else {
             throw new RoboDesligadoException("Remetente desligado, não é possível enviar mensagem.");
         }
-    }       
+    }  
 
     /**
      * Implementação da interface Comunicavel: recebe uma mensagem.

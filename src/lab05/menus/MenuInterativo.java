@@ -3,12 +3,12 @@ package menus;
 
 // Importações necessárias para o funcionamento da classe
 import java.util.Scanner; // Para entrada de dados do usuário
-import java.util.logging.Logger;
 import java.util.ArrayList; // Para trabalhar com listas dinâmicas
 import java.util.Arrays; // Para manipulação de arrays
 import java.util.List; // Interface para listas
 import java.util.regex.*; // Para trabalhar com expressões regulares
 
+import robos.AgenteInteligente;
 // Importações de classes específicas do projeto
 import robos.EstadoRobo; // Enum que define os estados do robô
 import robos.Robo; // Classe base para todos os robôs
@@ -23,6 +23,9 @@ import ambiente.Ambiente; // Classe que representa o ambiente de simulação
 import comunicacao.Comunicavel; // Interface para comunicação entre robôs
 import comunicacao.ErroComunicacaoException; // Exceção para erros de comunicação
 import entity.Entidade; // Classe base para entidades do sistema
+import missao.MissaoCentroide;
+import missao.MissaoExploraçãoSegura;
+import missao.MissaoMatador;
 import sensores.*; // Pacote contendo sensores e interfaces relacionadas
 
 // Classe principal que implementa o menu interativo
@@ -32,16 +35,10 @@ public class MenuInterativo {
     
     // Ambiente atual da simulação
     private Ambiente ambienteAtual;
-    private Logger logger;
 
     // Construtor que inicializa o menu com um ambiente específico
-    public MenuInterativo(Ambiente ambiente, Logger logger) {
+    public MenuInterativo(Ambiente ambiente) {
         this.ambienteAtual = ambiente;
-        this.logger = logger;
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
     // Método getter para acessar o ambiente atual
@@ -57,7 +54,7 @@ public class MenuInterativo {
         // Mensagem inicial do sistema
         System.out.println("Bem-vindo ao Simulador de Robôs!");
         System.out.println("Digite 'help' para ver a lista de comandos disponíveis.");
-        logger.info("Ambiente: " + ambienteAtual.getNome());
+        System.out.println("Ambiente: " + ambienteAtual.getNome());
 
         // Loop principal de execução
         while (!terminated) {
@@ -70,7 +67,7 @@ public class MenuInterativo {
         }
 
         // Mensagem de encerramento
-        logger.info("Simulação finalizada");
+        System.out.println("Simulação finalizada");
         // Fecha o scanner para liberar recursos
         scanner.close();
     }
@@ -116,6 +113,10 @@ public class MenuInterativo {
             case "move":
                 // Comando de movimento
                 move(args);
+                break;
+
+            case "missao":
+                missao(args);
                 break;
 
             case "executartarefa":
@@ -197,14 +198,31 @@ public class MenuInterativo {
         System.out.println("-- RoboAleatorio (subclasse de Robo):");
         System.out.println("   - Roubar : mesma lógica de Robo");
         System.out.println("   - Explodir <raio> : causa dano letal a todos os robôs dentro do raio especificado (inteiro)");
-        
+                
         System.out.println("-- RoboAtirador (subclasse de RoboAereo):"); 
-        // MUDAMOS A PARENT CLASS
         System.out.println("   - Roubar : mesma lógica de Robo");
         System.out.println("   - Subir <deltaZ> : herdado de RoboAereo");
         System.out.println("   - Descer <deltaZ> : herdado de RoboAereo");
         System.out.println("   - Atirar : elimina todos os robôs alinhados no mesmo X ou Y");
         System.out.println("   - EncherOSaco <n> : envia n mensagens aleatórias para um robô-alvo, gerando spam");
+    }
+
+    // Método auxiliar para encontrar robô pelo nome
+    private Robo findRobo(String nome) throws RoboNotFoundException {
+        // Percorre todas as entidades do ambiente
+        for (Entidade e : ambienteAtual.getEntidades()) {
+            // Filtra apenas robôs
+            if (!(e instanceof Robo)) {
+                continue;
+            }
+            Robo robo = (Robo) e;
+            // Comparação case-insensitive
+            if (robo.getNome().equalsIgnoreCase(nome)) {
+                return robo;
+            }
+        }
+        // Lança exceção se não encontrar
+        throw new RoboNotFoundException("Robô não encontrado");
     }
     
     // Método para alterar o estado de um robô
@@ -222,7 +240,7 @@ public class MenuInterativo {
         }
         catch (RoboNotFoundException e){
             // Trata caso robô não seja encontrado
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
             return;
         }
         
@@ -237,7 +255,7 @@ public class MenuInterativo {
                                 EstadoRobo.LIGADO : EstadoRobo.DESLIGADO;
                                 
         // Aplica o novo estado e exibe resultado
-        getLogger().info(robo.setEstado(novoEstado));
+        System.out.println(robo.setEstado(novoEstado));
     }
 
     // Método para listar tarefas de um robô específico
@@ -254,7 +272,7 @@ public class MenuInterativo {
             robo = findRobo(args[1]);
         } catch (RoboNotFoundException e){
             // Trata caso robô não seja encontrado
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
             return;
         }
         
@@ -303,9 +321,17 @@ public class MenuInterativo {
         for (Entidade e : ambienteAtual.getEntidades()) {
             if (e instanceof Robo) {
                 Robo robo = (Robo) e;
+                String missaoName = "[---]";
+
+                if (robo instanceof AgenteInteligente) {
+                    AgenteInteligente agente = (AgenteInteligente) robo;
+                    if (agente.hasMissao()) {
+                        missaoName = agente.getMissao().getClass().getSimpleName();
+                    }
+                }
 
                 // Formata e exibe informações detalhadas do robô
-                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d - Estado: %s%n - %s%n",
+                System.out.printf("%s (%s) - Posição: (%d, %d, %d) - Bateria: %d - Estado: %s%n - %s%n - Missão: %s%n",
                     robo.getNome(),
                     robo.getClass().getSimpleName(), // Tipo do robô
                     robo.getPosicaoX(), // Coordenada X
@@ -315,7 +341,8 @@ public class MenuInterativo {
                     // Estado formatado
                     robo.getEstado() == EstadoRobo.LIGADO ? "ligado" : 
                     robo.getEstado() == EstadoRobo.DESLIGADO ? "desligado" : "morto",
-                    robo.getDescricao()  // Descrição adicional
+                    robo.getDescricao(),  // Descrição adicional
+                    missaoName
                 );
             }
         }
@@ -335,7 +362,7 @@ public class MenuInterativo {
             robo = findRobo(args[1]);
         }catch (RoboNotFoundException e){
             // Trata robô não encontrado
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -348,11 +375,7 @@ public class MenuInterativo {
             robo.mover(deltaX, deltaY);
             
             // Exibe nova posição
-            getLogger().info(robo.getNome() + " movido para (" + 
-                               robo.getPosicaoX() + ", " + 
-                               robo.getPosicaoY() + ")");
-
-            getLogger().info(robo.getNome() + " movido para (" + 
+            System.out.println(robo.getNome() + " movido para (" + 
                                robo.getPosicaoX() + ", " + 
                                robo.getPosicaoY() + ")");
         } catch (NumberFormatException e) {
@@ -360,6 +383,88 @@ public class MenuInterativo {
             System.err.println("Coordenadas inválidas. Use números inteiros para deltaX e deltaY.");
         }
     }
+
+    private void missao(String [] args) {   
+        if (args.length < 3) {
+            System.out.println("Uso: missao <nome_robo> <adicionar/executar> [nome_missao]");
+            return;
+        }
+
+        Robo robo;
+        try{
+            // Busca o robô pelo nome
+            robo = findRobo(args[1]);
+        } catch (RoboNotFoundException e){
+            // Trata robô não encontrado    
+            System.out.println(e.getMessage());
+            return;
+        }
+        
+        if (!(robo instanceof AgenteInteligente)) {
+            System.err.println("Robô não é um agente inteligente, não pode executar missões.");
+            return;
+        }
+        
+        AgenteInteligente agente = (AgenteInteligente) robo;
+        
+
+        if (args[2].equals("adicionar")) {
+
+            if (args.length < 4) {
+                System.out.println("Adicionar <nome_missao>");
+                return;
+            }
+            
+            if (agente.hasMissao()) {
+                System.out.println("O robô substitui a missão atual.");
+            }
+
+            try {
+                switch (args[3].toLowerCase()) {
+                    case "centroide":
+                        agente.setMissao(new MissaoCentroide(agente, agente.getAmbiente()));
+                        break;
+
+                    case "exploracao":
+                        agente.setMissao(new MissaoExploraçãoSegura(agente, agente.getAmbiente()));
+                        break;
+
+                    case "matador":
+                        if (!(agente instanceof RoboAtirador)) {
+                            System.err.println("Missão 'matador' só pode ser atribuída a robôs atiradores.");
+                            return;
+                        }
+                        agente.setMissao(new MissaoMatador(agente, agente.getAmbiente()));
+                        break;
+                
+                    default:
+                        throw new TaskNotFoundException("Missão não encontrada: " + args[3]);
+                }
+            } catch (TaskNotFoundException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+
+
+            System.out.println("Missão " + args[2] + " adicionada ao robô " + robo.getNome() + ".");
+        }
+
+
+        else if (args[2].equals("executar")) {
+
+            if (!agente.hasMissao()) {
+                System.out.println("O robô não possui uma missão definida.");
+                return;
+            }
+
+            System.out.println("Executando missão " + args[2] + " do robô " + agente.getNome() + ".");
+      
+            agente.executarMissao();
+            
+            System.out.println("Fim da missão");
+        }
+
+    }  
 
     // Método para executar tarefas especiais
     private void executarTarefa(String[] args) {
@@ -392,13 +497,13 @@ public class MenuInterativo {
             robo.executarTarefa(comando, args_tarefa);
         } catch (RoboDesligadoException e) {
             // Trata robô desligado
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
         } catch (ErroComunicacaoException e) {
             // Trata erros de comunicação
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
         } catch (TaskNotFoundException e) {
             // Trata tarefa inexistente
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -416,7 +521,7 @@ public class MenuInterativo {
             robo = findRobo(args[1]);
         }
         catch (RoboNotFoundException e){
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -430,30 +535,12 @@ public class MenuInterativo {
         } 
         catch (RoboDesligadoException e) {
             // Trata robô desligado
-            getLogger().warning(e.getMessage()); 
+            System.out.println(e.getMessage()); 
         }
         catch (NaoSensoriavelException e){
             // Trata robô sem sensores
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
         }
-    }
-    
-    // Método auxiliar para encontrar robô pelo nome
-    private Robo findRobo(String nome) throws RoboNotFoundException {
-        // Percorre todas as entidades do ambiente
-        for (Entidade e : ambienteAtual.getEntidades()) {
-            // Filtra apenas robôs
-            if (!(e instanceof Robo)) {
-                continue;
-            }
-            Robo robo = (Robo) e;
-            // Comparação case-insensitive
-            if (robo.getNome().equalsIgnoreCase(nome)) {
-                return robo;
-            }
-        }
-        // Lança exceção se não encontrar
-        throw new RoboNotFoundException("Robô não encontrado");
     }
 
     // Método para comunicação entre robôs
@@ -470,7 +557,7 @@ public class MenuInterativo {
             remetente = findRobo(args[1]);
         }
         catch (RoboNotFoundException e){
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -479,7 +566,7 @@ public class MenuInterativo {
             // Busca robô destinatário
             destinatario = findRobo(args[2]);
         }catch (RoboNotFoundException e){
-            getLogger().warning(e.getMessage());
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -491,16 +578,16 @@ public class MenuInterativo {
             if (remetente instanceof Comunicavel && destinatario instanceof Comunicavel) {
                 // Envia a mensagem
                 ((Comunicavel) remetente).enviarMensagem((Comunicavel) destinatario, mensagem);
-                getLogger().info("Mensagem enviada de " + remetente.getNome() + " para " + destinatario.getNome());
+                System.out.println("Mensagem enviada de " + remetente.getNome() + " para " + destinatario.getNome());
             } else {
                 throw new ErroComunicacaoException("Robôs não são comunicaveis");
             }
         } catch (RoboDesligadoException e) {
             // Trata robô desligado
-            getLogger().warning("Erro ao enviar mensagem: " + e.getMessage());
+            System.out.println("Erro ao enviar mensagem: " + e.getMessage());
         } catch (ErroComunicacaoException e) {
             // Trata outros erros de comunicação
-            getLogger().warning("Erro ao enviar mensagem: " +  e.getMessage());
+            System.out.println("Erro ao enviar mensagem: " +  e.getMessage());
         }
     }
 
