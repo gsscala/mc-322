@@ -104,13 +104,7 @@ javac -d bin $(find src/lab05 -name "*.java")
 **Executar a simulação:**
 
 ```bash
-java -cp bin Main
-```
-
-**Executar com arquivo de configuração (opcional):**
-
-```bash
-java -cp bin Main config.txt
+java -cp bin main/Main
 ```
 
 ---
