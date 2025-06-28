@@ -1,46 +1,65 @@
-## Simulador de Robôs — Laboratório 4 (MC322, UNICAMP 2025/1)
+## Simulador de Robôs — Laboratório 5 (MC322, UNICAMP 2025/1)
 
 **Autores:** Giovanni Santos Scalabrin (RA 281210) & Rodrigo Banin Ferraz Camargo (RA 238257)
 
 ---
 
 ### Descrição
+
 Esta versão expande significativamente o simulador de robôs com:
-- Ambiente 3D com sistema de colisões e obstáculos
-- Comunicação entre robôs via sistema centralizado
-- Sensores especializados (proximidade/umidade)
-- Comportamentos especializados por tipo de robô
-- Sistema de exceções para tratamento de erros
-- Menu interativo completo para controle da simulação
+
+* Ambiente 3D com sistema de colisões e obstáculos
+* Comunicação entre robôs via sistema centralizado
+* Sensores especializados (proximidade/umidade)
+* Comportamentos especializados por tipo de robô
+* Sistema de exceções para tratamento de erros
+* Menu interativo completo para controle da simulação
+* **Novidades do Lab5:**
+
+  * Arquitetura modular com subsistemas internos
+  * Robôs autônomos com capacidade de executar missões
+  * Sistema de missões com implementações específicas
+  * Geração de logs de execução
+  * Composição avançada via classes abstratas e interfaces
 
 ---
 
 ### Ferramentas
-- **IDE:** Visual Studio Code
-- **Java:** OpenJDK 21.0.5
+
+* **IDE:** Visual Studio Code
+* **Java:** OpenJDK 21.0.5
+* **Gerenciamento de Dependências:** Java SE
+* **Controle de Versão:** Git/GitHub
 
 ---
 
 ### Estrutura do Projeto
+
 ```
-src/lab04
-├── ambiente/           # Classes do ambiente 3D
+src/
+├── ambiente/                  # Classes do ambiente 3D
 │   ├── Ambiente.java
 │   └── ForaMapaException.java
-├── comunicacao/        # Sistema de comunicação
+├── comunicacao/               # Sistema de comunicação
 │   ├── CentralComunicacao.java
 │   ├── Comunicavel.java
 │   └── ErroComunicacaoException.java
-├── entity/             # Entidades do sistema
+├── entity/                    # Entidades do sistema
 │   ├── Entidade.java
 │   └── TipoEntidade.java
-├── menus/              # Interface de usuário
+├── missao/                    # Implementações de missões
+│   ├── Missao.java
+│   ├── MissaoCentroide.java
+│   ├── MissaoExploracaoSegura.java
+│   └── MissaoMatador.java
+├── menus/                     # Interface de usuário
 │   └── MenuInterativo.java
-├── obstaculos/         # Obstáculos e tipos
+├── obstaculos/                # Obstáculos e tipos
 │   ├── ColisaoException.java
 │   ├── Obstaculo.java
-│   ├── TipoObstaculo.java
-├── robos/              # Implementações de robôs
+│   └── TipoObstaculo.java
+├── robos/                     # Implementações de robôs e subsistemas
+│   ├── AgenteInteligente.java
 │   ├── EstadoRobo.java
 │   ├── Explodidor.java
 │   ├── Ladrao.java
@@ -49,161 +68,176 @@ src/lab04
 │   ├── RoboAleatorio.java
 │   ├── RoboAtirador.java
 │   ├── RoboDesligadoException.java
+│   ├── RoboDistraido.java
 │   ├── RoboNotFoundException.java
 │   ├── RoboTerrestre.java
-│   └── TaskNotFoundException.java
-├── sensores/           # Sensores e interfaces
+│   ├── TaskNotFoundException.java
+│   └── subsistemas/           # Subsistemas internos
+│       ├── ControleMovimento.java
+│       ├── GerenciadorSensores.java
+│       └── ModuloComunicacao.java
+├── sensores/                  # Sensores e interfaces
 │   ├── NaoSensoriavelException.java
 │   ├── Sensor.java
 │   ├── SensorProximidade.java
 │   ├── SensorUmidade.java
 │   └── Sensoreavel.java
-├── utils/              # Utilitários
+├── utils/                     # Utilitários
 │   ├── DistanceCalculator.java
 │   ├── RandomNumberGenerator.java
 │   └── RandomStringGenerator.java
-└── Main.java           # Ponto de entrada
+├── logging/                   # Gerenciamento de logs
+│   └── LoggerConfig.java
+└── Main.java                  # Ponto de entrada
 ```
 
 ---
 
 ### Compilação e Execução
-1. **Compilar o projeto:**
-   ```bash
-   javac -d bin src/lab04/*.java src/lab04/ambiente/*.java src/lab04/comunicacao/*.java src/lab04/entity/*.java src/lab04/menus/*.java src/lab04/obstaculos/*.java src/lab04/robos/*.java src/lab04/sensores/*.java src/lab04/utils/*.java
-   ```
-2. **Executar a simulação:**
-   ```bash
-   java -cp bin Main
-   ```
+
+**Compilar o projeto:**
+
+```bash
+javac -d bin $(find src/lab05 -name "*.java")
+```
+
+**Executar a simulação:**
+
+```bash
+java -cp bin Main
+```
+
+**Executar com arquivo de configuração (opcional):**
+
+```bash
+java -cp bin Main config.txt
+```
 
 ---
 
 ### Arquitetura e Componentes Principais
 
-#### 1. Ambiente 3D (`Ambiente.java`)
-Representa o espaço tridimensional onde os robôs operam:
-- Mapa 3D com coordenadas (X, Y, Z)
-- Sistema de detecção de colisões
-- Gerenciamento de entidades (robôs e obstáculos)
-- Visualização 2D do plano XY (altura Z=0)
+#### 1. Sistema de Missões (`missao/`)
 
-**Funcionalidades:**
-- Verificação de limites com `ForaMapaException`
-- Tratamento de colisões com `ColisaoException`
-- Atualização dinâmica de posições
+Implementa o padrão Strategy:
 
-#### 2. Sistema de Comunicação (`CentralComunicacao.java`)
-Gerencia mensagens entre robôs:
-- Histórico de todas as comunicações
-- Formatação automática de mensagens
-- Interface `Comunicavel` para envio/recebimento
+* `Missao`: Interface base
+* `MissaoCentroide`: Move até o centro de outros robôs
+* `MissaoExploracaoSegura`: Evita obstáculos
+* `MissaoMatador`: Robô atirador elimina alvos
 
-#### 3. Robôs e Especializações
-| Classe            | Habilidades Únicas                     | Interfaces Implementadas       |
-|-------------------|----------------------------------------|--------------------------------|
-| `Robo` (Base)     | Movimento básico, Roubo de bateria     | `Entidade`, `Ladrao`           |
-| `RoboAereo`       | Controle de altitude (subir/descer)    | -                              |
-| `RoboAleatorio`   | Teleporte aleatório, Explosão          | `Explodidor`                   |
-| `RoboAtirador`    | Disparo, Spam de mensagens             | `Comunicavel`, `EnchedorDeSaco`|
-| `RoboTerrestre`   | Modo turbo (ignora obstáculos)         | `Comunicavel`                  |
+Cada missão gera log em `logs/` com:
 
-#### 4. Sensores (`Sensor.java`)
-| Tipo                  | Funcionalidade                          |
-|-----------------------|-----------------------------------------|
-| `SensorProximidade`   | Detecta entidades próximas              |
-| `SensorUmidade`       | Mede nível de umidade do ambiente       |
+* Posições visitadas
+* Sensores ativados
+* Obstáculos detectados
+* Ações realizadas
 
-Interface `Sensoreavel` permite ativação dos sensores
+#### 2. Robôs Autônomos (`AgenteInteligente.java`)
 
-#### 5. Sistema de Exceções
-| Exceção                     | Ocorrência Típica                          |
-|-----------------------------|--------------------------------------------|
-| `ForaMapaException`         | Movimento além dos limites do ambiente     |
-| `ColisaoException`          | Colisão com outra entidade                |
-| `RoboDesligadoException`    | Ação em robô desligado/morto              |
-| `RoboNotFoundException`     | Robô não encontrado no ambiente           |
-| `TaskNotFoundException`     | Tarefa não suportada pelo robô            |
-| `NaoSensoriavelException`   | Ativação de sensores não disponíveis      |
+Classe abstrata para robôs com missão:
+
+```java
+public abstract class AgenteInteligente extends Robo {
+    protected Missao missao;
+    private final GerenciadorSensores gerenciadorSensores;
+    public void setMissao(Missao missao) { ... }
+    public abstract void executarMissao();
+}
+```
+
+* `RoboAtirador`: Missões de combate
+* `RoboDistraido`: Pode falhar nas missões
+
+#### 3. Subsistemas dos Robôs (`robos/subsistemas/`)
+
+Composição modular:
+
+* `ControleMovimento`: Colisão/movimento
+* `GerenciadorSensores`: Sensores
+* `ModuloComunicacao`: Mensagens
+
+#### 4. Ambiente 3D (`Ambiente.java`)
+
+Melhorias:
+
+* Entidades dinâmicas
+* Colisão tridimensional
+
+#### 5. Tipos de Robôs
+
+| Classe          | Habilidades         | Autônomo | Subsistemas         |
+| --------------- | ------------------- | -------- | ------------------- |
+| `Robo`          | Movimento básico    | Não      | ControleMovimento   |
+| `RoboAereo`     | Altitude            | Não      | ControleMovimento   |
+| `RoboAleatorio` | Teleporte, Explosão | Não      | ControleMovimento   |
+| `RoboAtirador`  | Disparo, mensagens  | Sim      | Todos               |
+| `RoboTerrestre` | Turbo               | Não      | Movimento, Com      |
+| `RoboDistraido` | Missões com falhas  | Sim      | GerenciadorSensores |
+
+#### 6. Sistema de Exceções
+
+| Exceção                    | Ocorrência            |
+| -------------------------- | --------------------- |
+| `ForaMapaException`        | Robô fora dos limites |
+| `ColisaoException`         | Colisão com entidade  |
+| `RoboDesligadoException`   | Robô desligado/morto  |
+| `RoboNotFoundException`    | Robô inexistente      |
+| `TaskNotFoundException`    | Tarefa não suportada  |
+| `NaoSensoriavelException`  | Sensor não disponível |
+| `ErroComunicacaoException` | Falha de comunicação  |
 
 ---
 
 ### Comandos do Menu Interativo
 
-#### Fluxo de Execução
+#### Principais Comandos
 
-![Fluxo de execução](./diagramas/fluxo_programa.png)
+```bash
+missao <robo> adicionar <tipo>   # centroide, exploracao, matador
+missao <robo> executar
+move <robo> <dx> <dy>
+executartarefa <robo> <tarefa> [args]
+comunicar <de> <para> "<mensagem>"
+monitorar <robo>
+status
+showmapa
+```
 
-#### Descrição Detalhada dos Comandos
+#### Exemplos:
 
-1. **`move <nome_robo> <deltaX> <deltaY>`**  
-   Move o robô especificado no plano XY:
-   - Robôs terrestres: Movimento padrão com detecção de colisões
-   - Robôs aéreos: Movimento incluindo altitude
-   - RoboAleatorio: Teleporte para posição aleatória livre
-
-2. **`executartarefa <nome_robo> <tarefa> [args]`**  
-   Executa habilidades especiais conforme o tipo de robô:
-
-   | Robô             | Tarefas Disponíveis               | Parâmetros                     | Funcionalidade                                                                 |
-   |------------------|-----------------------------------|--------------------------------|--------------------------------------------------------------------------------|
-   | Todos            | `roubar`                          | -                              | Rouba bateria de robôs próximos (inversamente proporcional à distância)        |
-   | RoboAereo        | `subir`                           | `<deltaZ>`                     | Aumenta altitude                                                               |
-   |                  | `descer`                          | `<deltaZ>`                     | Diminui altitude                                                               |
-   | RoboAleatorio    | `explodir`                        | `<raio>`                       | Elimina robôs dentro do raio especificado                                      |
-   | RoboAtirador     | `atirar`                          | -                              | Elimina robôs alinhados na direção atual                                       |
-   |                  | `encherOSaco`                     | `<robô_alvo> <num_mensagens>`  | Envia mensagens aleatórias para outro robô                                     |
-   | RoboTerrestre    | `turbo`                           | `<deltaX> <deltaY> <velocidade>`| Movimento rápido ignorando obstáculos (se velocidade suficiente)               |
-
-3. **`comunicar <nome_remetente> <nome_destinatario> <mensagem>`**  
-   Envia mensagem entre robôs comunicáveis:
-   - Mensagens registradas na Central de Comunicação
-   - Exceção se robô estiver desligado
-
-4. **`monitorar <nome_robo>`**  
-   Ativa sensores do robô:
-   - `SensorProximidade`: Detecta entidades próximas
-   - `SensorUmidade`: Mede umidade ambiente
-   - Requer implementação de `Sensoreavel`
-
-5. **`showmapa`**  
-   Exibe representação visual do ambiente:
-   - Plano XY na altitude Z=0
-   - Símbolos: `0` (robô), `X` (obstáculo), `_` (vazio)
-
-6. **`status`**  
-   Exibe estado completo do ambiente:
-   - Posição e bateria de todos os robôs
-   - Dimensões do ambiente
-   - Nível de umidade
-
-7. **`tarefas <nome_robo>`**  
-   Lista todas as tarefas disponíveis para o robô especificado
-
-8. **`mudarestado <nome_robo>`**  
-   Alterna entre estados LIGADO/DESLIGADO:
-   - Robôs desligados não executam comandos
-   - Estado MORTO é permanente
-
-9. **`listmensagens`**  
-   Exibe histórico completo de comunicações entre robôs
-
-10. **`help`**  
-    Exibe ajuda detalhada com todos os comandos
+```bash
+executartarefa drone subir 5
+executartarefa sniper atirar
+executartarefa random explodir 10
+```
 
 ---
-### Diagrama de classes
 
-![Diagrama de classes](./diagramas/lab04.png)
+### Princípios de POO Aplicados
+
+* **Abstração**: `AgenteInteligente`, `Missao`
+* **Encapsulamento**: Subsistemas bem definidos
+* **Herança**: Robo → RoboAereo → RoboAtirador
+* **Polimorfismo**: Missões diferentes, interface comum
+* **Composição**: Robôs com subsistemas internos
+* **Coesão e Acoplamento**: Baixo acoplamento entre módulos
 
 ---
 
 ### Considerações Finais
-Este sistema demonstra conceitos avançados de POO:
-1. **Polimorfismo:** Tratamento uniforme de diferentes tipos de robôs
-2. **Encapsulamento:** Controle de acesso aos estados internos
-3. **Herança:** Especialização de comportamentos
-4. **Tratamento de erros:** Exceções personalizadas para fluxo controlado
-5. **Acoplamento fraco:** Componentes independentes via interfaces
 
-O sistema é extensível, permitindo adicionar novos tipos de robôs, sensores e comportamentos com impacto mínimo no código existente.
+Este laboratório demonstra conceitos avançados de POO:
+
+* Arquitetura modular com subsistemas
+* Comportamentos autônomos com Strategy
+* Gerenciamento de estado com tratamento de erros
+* Composição flexível e extensível
+* Separacão entre lógica e apresentação
+
+Extensível para novos tipos de:
+
+* Robôs
+* Missões
+* Sensores e subsistemas
+* Formatos de entrada/saída
