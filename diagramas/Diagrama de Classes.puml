@@ -1,0 +1,277 @@
+@startuml
+' Configurações de estilo
+skinparam class {
+    BackgroundColor<<ambiente>> #FFEBEE
+    BackgroundColor<<entity>> #E8F5E9
+    BackgroundColor<<obstaculos>> #FFF8E1
+    BackgroundColor<<robos>> #E3F2FD
+    BackgroundColor<<sensores>> #E0F7FA
+    BackgroundColor<<comunicacao>> #F3E5F5
+    BackgroundColor<<missao>> #FFECB3
+    BackgroundColor<<menus>> #F5F5F5
+    BackgroundColor<<exception>> #FFCDD2
+    BorderColor #333
+    ArrowColor #555
+}
+
+' Pacotes
+package ambiente <<Rectangle>> {
+    class Ambiente {
+        - largura: int
+        - profundidade: int
+        - altura: int
+        - nome: String
+        - umidade: int
+        - entidades: ArrayList<Entidade>
+        - mapa: TipoEntidade[][][]
+        - centralComunicacao: CentralComunicacao
+        + inicializaMapa()
+        + visualizarAmbiente()
+        + moverRoboMapa()
+        + adicionarEntidade()
+        + removerEntidade()
+        + handleColisoes()
+        + hasObstacle()
+        + dentroDosLimites()
+    }
+    
+    class ForaMapaException <<exception>> {
+        + ForaMapaException(message: String)
+    }
+}
+
+package entity <<Rectangle>> {
+    interface Entidade {
+        + getPosicaoX(): int
+        + getPosicaoY(): int
+        + getTipo(): TipoEntidade
+        + getDescricao(): String
+        + getRepresentacao(): char
+        + setAmbiente(ambiente: Ambiente)
+    }
+    
+    enum TipoEntidade {
+        VAZIO
+        ROBO
+        OBSTACULO
+        DESCONHECIDO
+        + getRepresentacao(): char
+    }
+}
+
+package obstaculos <<Rectangle>> {
+    class Obstaculo {
+        - posicaoX1: int
+        - posicaoY1: int
+        - posicaoX2: int
+        - posicaoY2: int
+        - tipoObstaculo: TipoObstaculo
+        + dentroDosLimites()
+        + handleColisao()
+    }
+    
+    enum TipoObstaculo {
+        POCA
+        PEDRA
+        PREDIO
+        CACTO
+        + getAltura(): int
+        + isBloqueiaPassagem(): boolean
+        + isLetal(): boolean
+        + getNivelUmidade(): int
+    }
+    
+    class ColisaoException <<exception>> {
+        + ColisaoException(message: String)
+    }
+}
+
+package robos <<Rectangle>> {
+    abstract class Robo {
+        - nome: String
+        - posicaoX: int
+        - posicaoY: int
+        - direcao: String
+        - estado: EstadoRobo
+        - bateria: int
+        - ambiente: Ambiente
+        + mover(deltaX: int, deltaY: int)
+        + executarTarefa()
+        + roubar()
+        + addSensor()
+    }
+    
+    class RoboAereo {
+        - altitude: int
+        - altitudeMaxima: int
+        + subir(deltaZ: int)
+        + descer(deltaZ: int)
+    }
+    
+    class RoboAleatorio {
+        + mover()
+        + explodir(radius: int)
+    }
+    
+    class RoboAtirador {
+        - arma: String
+        + atirar()
+        + encherOSaco()
+    }
+    
+    class RoboTerrestre {
+        - velocidadeMaxima: int
+        + turbo()
+    }
+    
+    abstract class AgenteInteligente {
+        - missao: Missao
+        + executarMissao()
+    }
+    
+    class RoboDistraido {
+        - nivelDistracao: int
+    }
+    
+    enum EstadoRobo {
+        LIGADO
+        DESLIGADO
+        MORTO
+    }
+    
+    interface Ladrao {
+        + roubar()
+    }
+    
+    interface Explodidor {
+        + explodir(radius: int)
+    }
+    
+    interface EnchedorDeSaco {
+        + encherOSaco(robo: Comunicavel, vezes: int)
+    }
+    
+    class RoboDesligadoException <<exception>> {
+        + RoboDesligadoException(message: String)
+    }
+    
+    class RoboNotFoundException <<exception>> {
+        + RoboNotFoundException(message: String)
+    }
+    
+    class TaskNotFoundException <<exception>> {
+        + TaskNotFoundException(message: String)
+    }
+}
+
+package sensores <<Rectangle>> {
+    abstract class Sensor {
+        - raio: double
+        - robo: Robo
+        + monitorar()
+    }
+    
+    class SensorUmidade {
+        + monitorar()
+    }
+    
+    class SensorProximidade {
+        + monitorar()
+    }
+    
+    interface Sensoreavel {
+        + acionarSensores()
+    }
+    
+    class NaoSensoriavelException <<exception>> {
+        + NaoSensoriavelException(message: String)
+    }
+}
+
+package comunicacao <<Rectangle>> {
+    class CentralComunicacao {
+        - mensagens: ArrayList<String>
+        + registrarMensagem()
+        + exibirMensagens()
+    }
+    
+    interface Comunicavel {
+        + enviarMensagem()
+        + receberMensagem()
+    }
+    
+    class ErroComunicacaoException <<exception>> {
+        + ErroComunicacaoException(message: String)
+    }
+}
+
+package missao <<Rectangle>> {
+    interface Missao {
+        + executarMissao()
+    }
+    
+    class MissaoCentroide {
+        - robo: AgenteInteligente
+        - ambiente: Ambiente
+        + executarMissao()
+    }
+    
+    class MissaoExploraçãoSegura {
+        - robo: AgenteInteligente
+        - ambiente: Ambiente
+        + executarMissao()
+    }
+    
+    class MissaoMatador {
+        - robo: AgenteInteligente
+        - ambiente: Ambiente
+        + executarMissao()
+    }
+}
+
+package menus <<Rectangle>> {
+    class MenuInterativo {
+        - ambienteAtual: Ambiente
+        + run()
+        + handleInput()
+    }
+}
+
+' Relações de herança
+RoboAereo --|> Robo
+RoboAleatorio --|> RoboAereo
+RoboAtirador --|> AgenteInteligente
+RoboTerrestre --|> Robo
+AgenteInteligente --|> Robo
+RoboDistraido --|> AgenteInteligente
+
+' Implementação de interfaces
+Robo ..|> Entidade
+Robo ..|> Ladrao
+RoboAleatorio ..|> Explodidor
+RoboAtirador ..|> EnchedorDeSaco
+RoboAtirador ..|> Comunicavel
+RoboTerrestre ..|> Comunicavel
+RoboTerrestre ..|> Sensoreavel
+AgenteInteligente ..|> Sensoreavel
+Obstaculo ..|> Entidade
+MissaoCentroide ..|> Missao
+MissaoExploraçãoSegura ..|> Missao
+MissaoMatador ..|> Missao
+SensorUmidade --|> Sensor
+SensorProximidade --|> Sensor
+
+' Associações
+Ambiente "1" *-- "*" Entidade
+Robo "1" *-- "*" Sensor
+Robo "1" o-- "1" Ambiente
+MenuInterativo "1" *-- "1" Ambiente
+CentralComunicacao "1" o-- "*" String
+
+' Relações adicionais
+Ambiente o-- CentralComunicacao
+RoboAtirador o-- ModuloComunicacao
+RoboTerrestre o-- ModuloComunicacao
+RoboTerrestre o-- GerenciadorSensores
+AgenteInteligente o-- GerenciadorSensores
+@enduml
