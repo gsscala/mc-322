@@ -168,43 +168,64 @@ public class MenuInterativo {
 
     // Método para exibir a ajuda detalhada
     private void showHelp() {
-        System.out.println("Comandos disponíveis:");
-        System.out.println("- end                             : Encerra a simulação imediatamente. Nenhum parâmetro adicional.");
-        System.out.println("- showRobos                       : Exibe lista de todos os robôs registrados no ambiente. Sem parâmetros.");
-        System.out.println("- status <nome_robo>              : Mostra posição (x,y,z), nível de bateria e estado (ligado/desligado/morto) do robô especificado.");
-        System.out.println("- move <nome_robo> <deltaX> <deltaY>       : Desloca o robô em deltaX (eixo X) e deltaY (eixo Y). Valores inteiros." );
-        System.out.println("- executarTarefa <nome_robo> <tarefa> [args] : Executa tarefa especial. 'tarefa' deve ser o nome exato (roubar, subir, explodir, etc.). 'args' são parâmetros da tarefa, quando aplicável (ex: deltaZ ou raio).");
-        System.out.println("- tarefas <nome_robo>             : Lista todas as tarefas que o tipo de robô suporta. Sem parâmetros.");
-        System.out.println("- monitorar <nome_robo>           : Aciona sensores de proximidade e umidade do robô, exibindo leituras atuais.");
-        System.out.println("- comunicar <nome1> <nome2> <msg> : Envia a string <msg> do robô <nome1> para o robô <nome2>. Mensagem entre aspas não é obrigatória.");
-        System.out.println("- showMapa                        : Desenha no console a representação textual do mapa e posição de todos os robôs.");
-        System.out.println("- mudarEstado <nome_robo>         : Alterna entre ligado e desligado. Se desligado, não aceita comandos até re-ligado.");
-        System.out.println("- listMensagens                   : Exibe todas as mensagens trocadas no ambiente desde o início da simulação.");
-        System.out.println("- help                            : Exibe esta mensagem de ajuda com sintaxes e descrições detalhadas.");
-    
-        System.out.println("\nDetalhamento de executarTarefa por classe de robô:");
+        System.out.println("===================== COMANDOS DISPONÍVEIS =====================");
+        System.out.println("Comandos Gerais:");
+        System.out.println("- end                             : Encerra imediatamente a simulação");
+        System.out.println("- help                            : Exibe esta mensagem de ajuda");
+        System.out.println("- status                          : Exibe status do ambiente e todos os robôs");
+        System.out.println("- showMapa                        : Mostra representação visual do mapa (camada Z=0)");
+        System.out.println("- listMensagens                   : Exibe histórico de comunicações entre robôs");
         
-        System.out.println("-- Robo (classe base):");
-        System.out.println("   - Roubar : rouba bateria de todos os robôs do ambiente. A quantidade roubada é o piso de B / R, em que B é a bateria do robô alvo e R é a distância euclidiana entre os dois.");
+        System.out.println("\nComandos de Movimento:");
+        System.out.println("- move <nome_robo> <deltaX> <deltaY> : Move robô terrestre/aéreo");
+        System.out.println("  Ex: move cebolinha 2 -3");
         
-        System.out.println("-- RoboAereo (subclasse de Robo):");
-        System.out.println("   - Roubar : mesma lógica de Robo");
-        System.out.println("   - Subir <deltaZ> : aumenta altitude até o máximo permitido pelo robô");
-        System.out.println("   - Descer <deltaZ> : diminui a altitude (não pode ficar abaixo de zero)");
+        System.out.println("\nComandos de Estado:");
+        System.out.println("- mudarEstado <nome_robo>         : Alterna entre LIGADO/DESLIGADO");
+        System.out.println("  Ex: mudarEstado dog_drone");
         
-        System.out.println("-- RoboTerrestre (subclasse de Robo):");
-        System.out.println("   - Roubar : mesma lógica de Robo");
+        System.out.println("\nComandos de Sensores:");
+        System.out.println("- monitorar <nome_robo>           : Ativa todos os sensores do robô");
+        System.out.println("  Ex: monitorar praprapra");
         
-        System.out.println("-- RoboAleatorio (subclasse de Robo):");
-        System.out.println("   - Roubar : mesma lógica de Robo");
-        System.out.println("   - Explodir <raio> : causa dano letal a todos os robôs dentro do raio especificado (inteiro)");
-                
-        System.out.println("-- RoboAtirador (subclasse de RoboAereo):"); 
-        System.out.println("   - Roubar : mesma lógica de Robo");
-        System.out.println("   - Subir <deltaZ> : herdado de RoboAereo");
-        System.out.println("   - Descer <deltaZ> : herdado de RoboAereo");
-        System.out.println("   - Atirar : elimina todos os robôs alinhados no mesmo X ou Y");
-        System.out.println("   - EncherOSaco <n> : envia n mensagens aleatórias para um robô-alvo, gerando spam");
+        System.out.println("\nComandos de Comunicação:");
+        System.out.println("- comunicar <remetente> <destino> \"<mensagem>\"");
+        System.out.println("  Ex: comunicar cebolinha lerdo \"Alerta: obstáculo à frente!\"");
+        
+        System.out.println("\nComandos de Missões:");
+        System.out.println("- missao <robo> adicionar <tipo>  : Adiciona nova missão ao robô");
+        System.out.println("- missao <robo> executar          : Executa missão atribuída");
+        System.out.println("  Tipos: centroide, exploracao, matador");
+        System.out.println("  Ex: missao dog_drone adicionar centroide");
+        
+        System.out.println("\nComandos de Tarefas Específicas:");
+        System.out.println("- tarefas <nome_robo>             : Lista tarefas disponíveis para o robô");
+        System.out.println("- executarTarefa <robo> <tarefa> [args] : Executa ação especial");
+        
+        System.out.println("\n==================== TAREFAS POR TIPO DE ROBÔ ==================");
+        
+        System.out.println("\nRobôs Aéreos (RoboAereo, RoboAtirador):");
+        System.out.println("  subir <altura>    : Aumenta altitude (Ex: executarTarefa dog_drone subir 5)");
+        System.out.println("  descer <altura>   : Diminui altitude (Ex: executarTarefa dog_drone descer 3)");
+        System.out.println("  roubar            : Rouba bateria de robôs próximos");
+        
+        System.out.println("\nRobô Atirador (RoboAtirador):");
+        System.out.println("  atirar            : Elimina robôs alinhados na direção atual");
+        System.out.println("  encherOSaco <alvo> <vezes> : Envia spam para outro robô");
+        System.out.println("    Ex: executarTarefa praprapra encherOSaco lerdo 10");
+        
+        System.out.println("\nRobô Aleatório (RoboAleatorio):");
+        System.out.println("  explodir <raio>   : Destrói robôs em um raio (Ex: executarTarefa random explodir 5)");
+        
+        System.out.println("\nTodos os Robôs:");
+        System.out.println("  roubar            : Rouba bateria de outros robôs proporcional à distância");
+        
+        System.out.println("\n======================= REGRAS IMPORTANTES =====================");
+        System.out.println("- Robôs desligados/mortos não executam comandos");
+        System.out.println("- Movimentos consomem bateria proporcional à umidade do ambiente");
+        System.out.println("- Obstáculos letais (cactos) destroem robôs imediatamente");
+        System.out.println("- Use aspas para mensagens com espaços: \"mensagem longa\"");
+        System.out.println("================================================================");
     }
 
     // Método auxiliar para encontrar robô pelo nome
