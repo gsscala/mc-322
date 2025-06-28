@@ -108,6 +108,9 @@ java -cp bin main/Main
 ```
 
 ---
+### Diagrama de Classes
+![](./diagramas/image.png)
+---
 
 ### Arquitetura e Componentes Principais
 
